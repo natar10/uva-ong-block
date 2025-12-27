@@ -101,7 +101,7 @@ function HomePage() {
               >
                 <Button
                   component={Link}
-                  to="/dashboard"
+                  to="/donar"
                   variant="contained"
                   size="large"
                   startIcon={<VolunteerActivismIcon />}
@@ -269,12 +269,21 @@ function HomePage() {
         </Container>
 
         {/* Impact Section */}
-        <Box py={8} px={6} bgcolor="black">
+        <Box
+          sx={{
+            py: 8,
+            px: 6,
+            bgcolor: (theme) =>
+              theme.palette.mode === 'light'
+                ? 'grey.900'
+                : 'grey.900',
+          }}
+        >
           <Container maxWidth="lg">
             <Typography
               variant="h3"
               textAlign="center"
-              sx={{ mb: 6, fontWeight: 700 }}
+              sx={{ mb: 6, fontWeight: 700, color: 'white' }}
             >
               Nuestro Impacto
             </Typography>
@@ -282,11 +291,11 @@ function HomePage() {
             <Grid container spacing={4}>
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Stack alignItems="center" spacing={1}>
-                  <TimelineIcon sx={{ fontSize: 48, color: 'primary.main' }} />
-                  <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  <TimelineIcon sx={{ fontSize: 48, color: 'primary.light' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 700, color: 'white' }}>
                     1,234
                   </Typography>
-                  <Typography variant="h6" color="text.secondary">
+                  <Typography variant="h6" sx={{ color: 'grey.400' }}>
                     Donaciones Realizadas
                   </Typography>
                 </Stack>
@@ -294,11 +303,11 @@ function HomePage() {
 
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Stack alignItems="center" spacing={1}>
-                  <GroupsIcon sx={{ fontSize: 48, color: 'success.main' }} />
-                  <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  <GroupsIcon sx={{ fontSize: 48, color: 'success.light' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 700, color: 'white' }}>
                     567
                   </Typography>
-                  <Typography variant="h6" color="text.secondary">
+                  <Typography variant="h6" sx={{ color: 'grey.400' }}>
                     Donantes Activos
                   </Typography>
                 </Stack>
@@ -307,12 +316,12 @@ function HomePage() {
               <Grid size={{ xs: 12, sm: 4 }}>
                 <Stack alignItems="center" spacing={1}>
                   <VolunteerActivismIcon
-                    sx={{ fontSize: 48, color: 'info.main' }}
+                    sx={{ fontSize: 48, color: 'info.light' }}
                   />
-                  <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 700, color: 'white' }}>
                     42
                   </Typography>
-                  <Typography variant="h6" color="text.secondary">
+                  <Typography variant="h6" sx={{ color: 'grey.400' }}>
                     Proyectos Activos
                   </Typography>
                 </Stack>
@@ -382,10 +391,10 @@ function HomePage() {
                   >
                     1
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: 'white' }}>
                     Regístrate
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography variant="body1" sx={{ color: 'grey.300' }}>
                     Conecta tu wallet de Ethereum o crea una nueva. El proceso
                     es rápido y seguro.
                   </Typography>
@@ -413,10 +422,10 @@ function HomePage() {
                   >
                     2
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: 'white' }}>
                     Elige un Proyecto
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography variant="body1" sx={{ color: 'grey.300' }}>
                     Explora nuestros proyectos activos y elige aquel que más te
                     inspire. Todos están verificados.
                   </Typography>
@@ -444,10 +453,10 @@ function HomePage() {
                   >
                     3
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: 'white' }}>
                     Dona y Gobierna
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography variant="body1" sx={{ color: 'grey.300' }}>
                     Realiza tu donación y recibe tokens de gobernanza para
                     participar en decisiones futuras.
                   </Typography>
@@ -493,7 +502,7 @@ function HomePage() {
               >
                 <Button
                   component={Link}
-                  to="/dashboard"
+                  to="/donar"
                   variant="contained"
                   size="large"
                   startIcon={<VolunteerActivismIcon />}
@@ -542,8 +551,8 @@ function HomePage() {
           sx={{
             bgcolor: (theme) =>
               theme.palette.mode === 'light'
-                ? alpha(theme.palette.primary.main, 0.03)
-                : alpha(theme.palette.primary.dark, 0.1),
+                ? 'grey.50'
+                : 'grey.900',
             py: { xs: 6, md: 10 },
           }}
         >
@@ -551,15 +560,23 @@ function HomePage() {
             <Typography
               variant="h3"
               textAlign="center"
-              sx={{ mb: 2, fontWeight: 700 }}
+              sx={{
+                mb: 2,
+                fontWeight: 700,
+                color: (theme) => theme.palette.mode === 'light' ? 'grey.900' : 'white'
+              }}
             >
               Nuestros Fundadores
             </Typography>
             <Typography
               variant="h6"
               textAlign="center"
-              color="text.secondary"
-              sx={{ mb: 6, maxWidth: 700, mx: 'auto' }}
+              sx={{
+                mb: 6,
+                maxWidth: 700,
+                mx: 'auto',
+                color: (theme) => theme.palette.mode === 'light' ? 'grey.700' : 'grey.400'
+              }}
             >
               El equipo visionario detrás de BlockChain4Good
             </Typography>
@@ -578,10 +595,21 @@ function HomePage() {
                   >
                     JM
                   </Avatar>
-                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 600,
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.900' : 'white'
+                    }}
+                  >
                     Jorne Martin
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.600' : 'grey.400'
+                    }}
+                  >
                     Co-Fundador
                   </Typography>
                 </Stack>
@@ -600,10 +628,21 @@ function HomePage() {
                   >
                     NR
                   </Avatar>
-                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 600,
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.900' : 'white'
+                    }}
+                  >
                     Nataly Rocha
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.600' : 'grey.400'
+                    }}
+                  >
                     Co-Fundadora
                   </Typography>
                 </Stack>
@@ -622,10 +661,21 @@ function HomePage() {
                   >
                     LU
                   </Avatar>
-                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 600,
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.900' : 'white'
+                    }}
+                  >
                     Loly Ureña
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: (theme) => theme.palette.mode === 'light' ? 'grey.600' : 'grey.400'
+                    }}
+                  >
                     Co-Fundadora
                   </Typography>
                 </Stack>
