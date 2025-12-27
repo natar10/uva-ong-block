@@ -121,7 +121,7 @@ export default function Footer() {
             </Typography>
             <Stack spacing={0.5}>
               <Typography variant="body2" color="text.secondary">
-                Jorne Martin - Co-Fundador
+              Jorge Martin - Co-Fundador
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Nataly Rocha - Co-Fundadora

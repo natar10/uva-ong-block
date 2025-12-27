@@ -605,7 +605,7 @@ function HomePage() {
                       color: (theme) => theme.palette.mode === 'light' ? 'grey.900' : 'white'
                     }}
                   >
-                    Jorne Martin
+                    Jorge Martin
                   </Typography>
                   <Typography
                     variant="body2"
