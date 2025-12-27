@@ -9,10 +9,21 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@mui/x-charts": "^8.22.1",
+    "@mui/x-data-grid": "^8.22.1",
+    "@mui/x-date-pickers": "^8.22.1",
+    "@mui/x-tree-view": "^8.22.0",
+    "@react-spring/web": "^10.0.3",
     "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.19",
     "ethers": "^6.16.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

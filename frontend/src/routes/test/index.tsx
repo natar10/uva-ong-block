@@ -1,8 +1,6 @@
 import { useContract } from '@/hooks/useContract';
 import { createFileRoute } from '@tanstack/react-router'
-import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import React from 'react';
 
 export const Route = createFileRoute('/test/')({
   component: RouteComponent,
