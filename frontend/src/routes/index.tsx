@@ -117,7 +117,7 @@ function HomePage() {
                 </Button>
                 <Button
                   component={Link}
-                  to="/dashboard"
+                  to="/proyectos"
                   variant="outlined"
                   size="large"
                   sx={{ px: 4, py: 1.5, fontSize: '1.1rem', fontWeight: 600 }}
@@ -522,7 +522,7 @@ function HomePage() {
                 </Button>
                 <Button
                   component={Link}
-                  to="/dashboard"
+                  to="/proyectos"
                   variant="outlined"
                   size="large"
                   sx={{

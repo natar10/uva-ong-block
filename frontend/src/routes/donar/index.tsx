@@ -267,7 +267,7 @@ function DonarPage() {
           {/* Paso 3: Seleccionar Proyecto */}
           {activeStep === 2 && (
             <Box>
-              <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
+              <Typography variant="h4" textAlign="center" sx={{ mb: 4, color: 'black' }}>
                 Selecciona un Proyecto
               </Typography>
               <Grid container spacing={3}>
