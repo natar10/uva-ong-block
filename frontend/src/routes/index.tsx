@@ -11,6 +11,8 @@ import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
@@ -28,6 +30,7 @@ function HomePage() {
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
+      <Header />
       <Box
         sx={{
           minHeight: '100vh',
@@ -684,22 +687,8 @@ function HomePage() {
           </Container>
         </Box>
 
-        {/* Footer */}
-        <Box
-          sx={{
-            bgcolor: (theme) =>
-              theme.palette.mode === 'light' ? 'grey.100' : 'grey.900',
-            py: 4,
-          }}
-        >
-          <Container maxWidth="lg">
-            <Typography variant="body2" color="text.secondary" align="center">
-              © {new Date().getFullYear()} BlockChain4Good - Transformando el
-              mundo con tecnología blockchain
-            </Typography>
-          </Container>
-        </Box>
       </Box>
+      <Footer />
     </AppTheme>
   );
 }

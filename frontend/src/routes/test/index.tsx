@@ -6,9 +6,14 @@ export const Route = createFileRoute('/test/')({
   component: RouteComponent,
 })
 
+interface Proyecto {
+  id: string;
+  descripcion: string;
+}
+
 function RouteComponent() {
 
-    const[proyectos, setProyectos] = useState(null);
+    const[proyectos, setProyectos] = useState<Proyecto | null>(null);
     const { getContract } = useContract();
     const [loading, setLoading] = useState(true);
 
@@ -35,5 +40,5 @@ function RouteComponent() {
     console.log("proyectos");
     console.log(proyectos);
 
-  return <div> <h2>Este es el FE, cutre... pero FE jaja </h2> <h3>{loading ? <>Cargando...</> : <>Proyecto cargado desde solidity id: {proyectos.id} nombre: {proyectos.descripcion}</>}</h3></div>
+  return <div> <h2>Este es el FE, cutre... pero FE jaja </h2> <h3>{loading ? <>Cargando...</> : <>Proyecto cargado desde solidity id: {proyectos?.id} nombre: {proyectos?.descripcion}</>}</h3></div>
 }

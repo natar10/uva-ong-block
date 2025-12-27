@@ -24,6 +24,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
 import { alpha } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
+import Header from '../../components/layout/Header';
+import Footer from '../../components/layout/Footer';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -66,7 +68,6 @@ function DonarPage() {
   const [tipoDonante, setTipoDonante] = useState('0'); // 0: Individual, 1: Empresa
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState('');
   const [montoDonacion, setMontoDonacion] = useState('');
-  const [isRegistered, setIsRegistered] = useState(false);
 
   const steps = ['Conectar Wallet', 'Registrarse', 'Seleccionar Proyecto', 'Donar'];
 
@@ -78,7 +79,7 @@ function DonarPage() {
         // Solicitar acceso a la cuenta
         const accounts = await window.ethereum.request({
           method: 'eth_requestAccounts',
-        });
+        }) as string[];
         setWalletAddress(accounts[0]);
         setWalletConnected(true);
         setActiveStep(1);
@@ -97,7 +98,6 @@ function DonarPage() {
   const handleRegistrar = () => {
     if (nombre.trim()) {
       // Aquí iría la llamada al contrato: registrarDonante(nombre, tipoDonante)
-      setIsRegistered(true);
       setActiveStep(2);
     }
   };
@@ -122,6 +122,7 @@ function DonarPage() {
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
+      <Header />
       <Box
         sx={{
           minHeight: '100vh',
@@ -471,6 +472,7 @@ function DonarPage() {
           </Card>
         </Container>
       </Box>
+      <Footer />
     </AppTheme>
   );
 }

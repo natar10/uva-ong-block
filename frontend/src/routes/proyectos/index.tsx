@@ -20,6 +20,8 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { alpha } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
+import Header from '../../components/layout/Header';
+import Footer from '../../components/layout/Footer';
 
 export const Route = createFileRoute('/proyectos/')({
   component: ProyectosPage,
@@ -186,6 +188,7 @@ function ProyectosPage() {
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
+      <Header />
       <Box
         sx={{
           minHeight: '100vh',
@@ -525,6 +528,7 @@ function ProyectosPage() {
           </Card>
         </Container>
       </Box>
+      <Footer />
     </AppTheme>
   );
 }
