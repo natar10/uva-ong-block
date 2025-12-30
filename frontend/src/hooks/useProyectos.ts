@@ -5,7 +5,7 @@ import {
   type Proyecto,
   type ProyectosStats,
   EstadoProyecto,
-} from '../data/proyectos.data';
+} from '../data/query/proyectos';
 
 interface UseProyectosReturn {
   proyectos: Proyecto[];

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -22,6 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
 import { alpha } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
 import Header from '../../components/layout/Header';
@@ -30,50 +31,93 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useRegistrarDonante, TipoDonante } from '../../hooks/useRegistrarDonante';
+import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
+import { useDonante } from '../../hooks/useDonante';
 
 export const Route = createFileRoute('/donar/')({
   component: DonarPage,
 });
-
-// Mock data de proyectos (esto vendría del contrato en producción)
-const mockProyectos = [
-  {
-    id: 'proyecto-1',
-    descripcion: 'Educación para niños en comunidades rurales',
-    responsable: '0x1234...5678',
-    cantidadRecaudada: '5.5',
-    estado: 'Activo',
-  },
-  {
-    id: 'proyecto-2',
-    descripcion: 'Alimentación para familias en situación vulnerable',
-    responsable: '0xabcd...efgh',
-    cantidadRecaudada: '3.2',
-    estado: 'Activo',
-  },
-  {
-    id: 'proyecto-3',
-    descripcion: 'Atención médica en zonas de bajos recursos',
-    responsable: '0x9876...5432',
-    cantidadRecaudada: '7.8',
-    estado: 'Activo',
-  },
-];
 
 function DonarPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [nombre, setNombre] = useState('');
-  const [tipoDonante, setTipoDonante] = useState('0'); // 0: Individual, 1: Empresa
+  const [tipoDonante, setTipoDonante] = useState<TipoDonante>(TipoDonante.Individual);
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState('');
   const [montoDonacion, setMontoDonacion] = useState('');
+  const [checkingWallet, setCheckingWallet] = useState(true);
+
+  const { registrar, isLoading, isSuccess, isError, error, data, reset } = useRegistrarDonante();
+  const { proyectos, loading: loadingProyectos, error: errorProyectos } = useProyectos();
+  const { donante, isRegistered, loading: loadingDonante } = useDonante(
+    walletConnected ? walletAddress : null
+  );
 
   const steps = ['Conectar Wallet', 'Registrarse', 'Seleccionar Proyecto', 'Donar'];
 
+  // Efecto para verificar si ya hay una wallet conectada al cargar
+  useEffect(() => {
+    const checkWallet = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          // Verificar si ya hay cuentas conectadas
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          }) as string[];
+
+          if (accounts.length > 0) {
+            console.log('Wallet ya conectada:', accounts[0]);
+            setWalletAddress(accounts[0]);
+            setWalletConnected(true);
+            // No avanzamos el paso aún, esperamos verificar si está registrado
+          } else {
+            setCheckingWallet(false);
+          }
+        } catch (error) {
+          console.error('Error verificando wallet:', error);
+          setCheckingWallet(false);
+        }
+      } else {
+        setCheckingWallet(false);
+      }
+    };
+
+    checkWallet();
+  }, []);
+
+  // Efecto para verificar si el donante está registrado
+  useEffect(() => {
+    if (walletConnected && !loadingDonante) {
+      setCheckingWallet(false);
+
+      if (isRegistered && donante) {
+        console.log('Donante ya registrado:', donante);
+        // Llenar los datos del donante
+        setNombre(donante.nombre);
+        setTipoDonante(donante.tipoDonante);
+        // Avanzar directamente al paso de selección de proyecto
+        setActiveStep(2);
+      } else {
+        // Si no está registrado, ir al paso de registro
+        setActiveStep(1);
+      }
+    }
+  }, [walletConnected, loadingDonante, isRegistered, donante]);
+
+  // Efecto para avanzar al siguiente paso cuando el registro sea exitoso
+  useEffect(() => {
+    if (isSuccess) {
+      setActiveStep(2);
+      // Resetear la mutación después de un tiempo
+      setTimeout(() => {
+        reset();
+      }, 3000);
+    }
+  }, [isSuccess, reset]);
+
   const handleConnectWallet = async () => {
-    // Simulación de conexión de wallet
-    // En producción, aquí iría la lógica de ethers.js o web3.js
     if (typeof window.ethereum !== 'undefined') {
       try {
         // Solicitar acceso a la cuenta
@@ -82,23 +126,25 @@ function DonarPage() {
         }) as string[];
         setWalletAddress(accounts[0]);
         setWalletConnected(true);
-        setActiveStep(1);
+        // No avanzamos el paso aquí, el useEffect lo manejará
       } catch (error) {
         console.error('Error conectando wallet:', error);
+        setCheckingWallet(false);
       }
     } else {
       // Simulación para desarrollo sin MetaMask
       const mockAddress = '0x' + Math.random().toString(16).substr(2, 40);
       setWalletAddress(mockAddress);
       setWalletConnected(true);
-      setActiveStep(1);
     }
   };
 
   const handleRegistrar = () => {
     if (nombre.trim()) {
-      // Aquí iría la llamada al contrato: registrarDonante(nombre, tipoDonante)
-      setActiveStep(2);
+      registrar({
+        nombre: nombre.trim(),
+        tipo: tipoDonante,
+      });
     }
   };
 
@@ -185,7 +231,15 @@ function DonarPage() {
                     Necesitas conectar tu billetera de Ethereum para poder donar.
                     Recomendamos usar MetaMask.
                   </Typography>
-                  {!walletConnected ? (
+
+                  {checkingWallet ? (
+                    <Box sx={{ textAlign: 'center' }}>
+                      <CircularProgress />
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                        Verificando wallet...
+                      </Typography>
+                    </Box>
+                  ) : !walletConnected ? (
                     <Button
                       variant="contained"
                       size="large"
@@ -195,6 +249,17 @@ function DonarPage() {
                     >
                       Conectar Wallet
                     </Button>
+                  ) : loadingDonante ? (
+                    <Box sx={{ textAlign: 'center' }}>
+                      <CircularProgress />
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                        Verificando registro de donante...
+                      </Typography>
+                      <Alert severity="info" sx={{ mt: 2 }}>
+                        Wallet conectada: {walletAddress.substring(0, 6)}...
+                        {walletAddress.substring(38)}
+                      </Alert>
+                    </Box>
                   ) : (
                     <Alert severity="success" icon={<CheckCircleIcon />}>
                       Wallet conectada: {walletAddress.substring(0, 6)}...
@@ -219,6 +284,19 @@ function DonarPage() {
                     </Typography>
                   </Box>
 
+                  {isRegistered && donante && (
+                    <Alert severity="info" icon={<CheckCircleIcon />}>
+                      Ya estás registrado como <strong>{donante.nombre}</strong>
+                      <Button
+                        size="small"
+                        onClick={() => setActiveStep(2)}
+                        sx={{ mt: 1, display: 'block' }}
+                      >
+                        Ir a seleccionar proyecto
+                      </Button>
+                    </Alert>
+                  )}
+
                   <TextField
                     label="Nombre"
                     fullWidth
@@ -230,35 +308,55 @@ function DonarPage() {
                   <FormControl>
                     <FormLabel>Tipo de Donante</FormLabel>
                     <RadioGroup
-                      value={tipoDonante}
-                      onChange={(e) => setTipoDonante(e.target.value)}
+                      value={tipoDonante.toString()}
+                      onChange={(e) => setTipoDonante(parseInt(e.target.value) as TipoDonante)}
                     >
                       <FormControlLabel
-                        value="0"
+                        value={TipoDonante.Individual.toString()}
                         control={<Radio />}
                         label="Donante Individual"
                       />
                       <FormControlLabel
-                        value="1"
+                        value={TipoDonante.Empresa.toString()}
                         control={<Radio />}
                         label="Empresa / Organización"
                       />
                     </RadioGroup>
                   </FormControl>
 
-                  <Alert severity="info">
-                    Al registrarte, recibirás tokens de gobernanza que te permitirán
-                    participar en decisiones sobre los proyectos.
-                  </Alert>
+                  {isSuccess && data && (
+                    <Alert severity="success" icon={<CheckCircleIcon />}>
+                      ¡Registro exitoso! {data.message}
+                      {data.transactionHash && (
+                        <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                          TX: {data.transactionHash.substring(0, 10)}...
+                          {data.transactionHash.substring(data.transactionHash.length - 8)}
+                        </Typography>
+                      )}
+                    </Alert>
+                  )}
+
+                  {isError && error && (
+                    <Alert severity="error">
+                      Error al registrar: {error.message}
+                    </Alert>
+                  )}
+
+                  {!isSuccess && (
+                    <Alert severity="info">
+                      Al registrarte, recibirás tokens de gobernanza que te permitirán
+                      participar en decisiones sobre los proyectos.
+                    </Alert>
+                  )}
 
                   <Button
                     variant="contained"
                     size="large"
                     onClick={handleRegistrar}
-                    disabled={!nombre.trim()}
-                    startIcon={<PersonAddIcon />}
+                    disabled={!nombre.trim() || isLoading}
+                    startIcon={isLoading ? <CircularProgress size={20} /> : <PersonAddIcon />}
                   >
-                    Registrarme
+                    {isLoading ? 'Registrando...' : 'Registrarme'}
                   </Button>
                 </Stack>
               </CardContent>
@@ -268,74 +366,101 @@ function DonarPage() {
           {/* Paso 3: Seleccionar Proyecto */}
           {activeStep === 2 && (
             <Box>
+              
+              <Typography variant="h4" textAlign="center" sx={{ mb: 4, color: 'black' }}>
+                Estás donando con la wallet: {walletAddress.substring(0, 6)}...{walletAddress.substring(38)}
+              </Typography>
+
               <Typography variant="h4" textAlign="center" sx={{ mb: 4, color: 'black' }}>
                 Selecciona un Proyecto
               </Typography>
-              <Grid container spacing={3}>
-                {mockProyectos.map((proyecto) => (
-                  <Grid key={proyecto.id} size={{ xs: 12, md: 4 }}>
-                    <Card
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-8px)',
-                          boxShadow: 6,
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Chip
-                          label={proyecto.estado}
-                          color="success"
-                          size="small"
-                          sx={{ mb: 2 }}
-                        />
-                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                          {proyecto.descripcion}
-                        </Typography>
-                        <Stack spacing={1}>
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>ID:</strong> {proyecto.id}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Responsable:</strong> {proyecto.responsable}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 1,
-                              mt: 2,
-                            }}
-                          >
-                            <VolunteerActivismIcon
-                              sx={{ fontSize: 20, color: 'primary.main' }}
-                            />
-                            <Typography variant="h6" color="primary.main">
-                              {proyecto.cantidadRecaudada} ETH
-                            </Typography>
-                          </Box>
-                          <Typography variant="caption" color="text.secondary">
-                            Recaudado hasta ahora
-                          </Typography>
-                        </Stack>
-                      </CardContent>
-                      <CardActions sx={{ p: 2, pt: 0 }}>
-                        <Button
-                          fullWidth
-                          variant="contained"
-                          onClick={() => handleSeleccionarProyecto(proyecto.id)}
+
+              {loadingProyectos ? (
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <CircularProgress />
+                  <Typography variant="h6" color="text.secondary" sx={{ mt: 2 }}>
+                    Cargando proyectos desde blockchain...
+                  </Typography>
+                </Box>
+              ) : errorProyectos ? (
+                <Alert severity="error" sx={{ maxWidth: 600, mx: 'auto' }}>
+                  Error al cargar proyectos: {errorProyectos}
+                </Alert>
+              ) : proyectos.length === 0 ? (
+                <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto' }}>
+                  No hay proyectos activos disponibles en este momento.
+                </Alert>
+              ) : (
+                <Grid container spacing={3}>
+                  {proyectos
+                    .filter((p) => p.estado === EstadoProyecto.Activo)
+                    .map((proyecto) => (
+                      <Grid key={proyecto.id} size={{ xs: 12, md: 4 }}>
+                        <Card
+                          sx={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-8px)',
+                              boxShadow: 6,
+                            },
+                          }}
                         >
-                          Donar a este proyecto
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+                          <CardContent sx={{ flexGrow: 1 }}>
+                            <Chip
+                              label="Activo"
+                              color="success"
+                              size="small"
+                              sx={{ mb: 2 }}
+                            />
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                              {proyecto.descripcion}
+                            </Typography>
+                            <Stack spacing={1}>
+                              <Typography variant="body2" color="text.secondary">
+                                <strong>ID:</strong> {proyecto.id}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                <strong>Responsable:</strong>{' '}
+                                {proyecto.responsable.substring(0, 6)}...
+                                {proyecto.responsable.substring(38)}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 1,
+                                  mt: 2,
+                                }}
+                              >
+                                <VolunteerActivismIcon
+                                  sx={{ fontSize: 20, color: 'primary.main' }}
+                                />
+                                <Typography variant="h6" color="primary.main">
+                                  {proyecto.cantidadRecaudada} ETH
+                                </Typography>
+                              </Box>
+                              <Typography variant="caption" color="text.secondary">
+                                Recaudado hasta ahora
+                              </Typography>
+                            </Stack>
+                          </CardContent>
+                          <CardActions sx={{ p: 2, pt: 0 }}>
+                            <Button
+                              fullWidth
+                              variant="contained"
+                              onClick={() => handleSeleccionarProyecto(proyecto.id)}
+                            >
+                              Donar a este proyecto
+                            </Button>
+                          </CardActions>
+                        </Card>
+                      </Grid>
+                    ))}
+                </Grid>
+              )}
             </Box>
           )}
 
