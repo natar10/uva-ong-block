@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -34,6 +34,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useRegistrarDonante, TipoDonante } from '../../hooks/useRegistrarDonante';
 import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
 import { useDonante } from '../../hooks/useDonante';
+import { useRealizarDonacion } from '../../hooks/useRealizarDonacion';
 import Divider from '@mui/material/Divider';
 
 export const Route = createFileRoute('/donar/')({
@@ -41,6 +42,7 @@ export const Route = createFileRoute('/donar/')({
 });
 
 function DonarPage() {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
@@ -55,6 +57,15 @@ function DonarPage() {
   const { donante, isRegistered, loading: loadingDonante } = useDonante(
     walletConnected ? walletAddress : null
   );
+  const {
+    donar,
+    isLoading: isDonating,
+    isSuccess: donacionSuccess,
+    isError: donacionError,
+    error: donacionErrorMsg,
+    data: donacionData,
+    reset: resetDonacion,
+  } = useRealizarDonacion();
 
   const steps = ['Conectar Wallet', 'Registrarse', 'Seleccionar Proyecto', 'Donar'];
 
@@ -118,6 +129,19 @@ function DonarPage() {
     }
   }, [isSuccess, reset]);
 
+  // Efecto para manejar donación exitosa
+  useEffect(() => {
+    if (donacionSuccess) {
+      // Resetear el formulario de donación
+      setMontoDonacion('');
+      // Redirigir a la página de proyectos
+      setTimeout(() => {
+        resetDonacion();
+        navigate({ to: '/proyectos' });
+      }, 800);
+    }
+  }, [donacionSuccess, resetDonacion, navigate]);
+
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
       try {
@@ -156,13 +180,10 @@ function DonarPage() {
 
   const handleDonar = () => {
     if (montoDonacion && parseFloat(montoDonacion) > 0) {
-      // Aquí iría la llamada al contrato: donar(proyectoSeleccionado) con value: montoDonacion
-      alert(
-        `¡Donación exitosa! Has donado ${montoDonacion} ETH al proyecto ${proyectoSeleccionado}`
-      );
-      // Reset
-      setMontoDonacion('');
-      setActiveStep(2);
+      donar({
+        proyectoId: proyectoSeleccionado,
+        monto: montoDonacion,
+      });
     }
   };
 
@@ -499,10 +520,33 @@ function DonarPage() {
                     </Typography>
                   </Box>
 
-                  <Alert severity="info">
-                    Tu donación será registrada en blockchain de forma inmutable y
-                    recibirás tokens de gobernanza proporcionales a tu aporte.
-                  </Alert>
+                  {!donacionSuccess && !donacionError && (
+                    <Alert severity="info">
+                      Tu donación será registrada en blockchain de forma inmutable y
+                      recibirás tokens de gobernanza proporcionales a tu aporte.
+                    </Alert>
+                  )}
+
+                  {donacionSuccess && donacionData && (
+                    <Alert severity="success" icon={<CheckCircleIcon />}>
+                      ¡Donación exitosa! {donacionData.message}
+                      {donacionData.transactionHash && (
+                        <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                          TX: {donacionData.transactionHash.substring(0, 10)}...
+                          {donacionData.transactionHash.substring(donacionData.transactionHash.length - 8)}
+                        </Typography>
+                      )}
+                      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                        Serás redirigido a la selección de proyectos en unos segundos...
+                      </Typography>
+                    </Alert>
+                  )}
+
+                  {donacionError && donacionErrorMsg && (
+                    <Alert severity="error">
+                      Error al realizar la donación: {donacionErrorMsg.message}
+                    </Alert>
+                  )}
 
                   <TextField
                     label="Monto de Donación"
@@ -551,6 +595,7 @@ function DonarPage() {
                     <Button
                       variant="outlined"
                       onClick={() => setActiveStep(2)}
+                      disabled={isDonating}
                       sx={{ flex: 1 }}
                     >
                       Volver
@@ -559,11 +604,11 @@ function DonarPage() {
                       variant="contained"
                       size="large"
                       onClick={handleDonar}
-                      disabled={!montoDonacion || parseFloat(montoDonacion) <= 0}
-                      startIcon={<VolunteerActivismIcon />}
+                      disabled={!montoDonacion || parseFloat(montoDonacion) <= 0 || isDonating}
+                      startIcon={isDonating ? <CircularProgress size={20} /> : <VolunteerActivismIcon />}
                       sx={{ flex: 1 }}
                     >
-                      Confirmar Donación
+                      {isDonating ? 'Procesando donación...' : 'Confirmar Donación'}
                     </Button>
                   </Stack>
                 </Stack>
