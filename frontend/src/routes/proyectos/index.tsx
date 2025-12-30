@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -22,125 +21,15 @@ import { alpha } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
+import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
 
 export const Route = createFileRoute('/proyectos/')({
   component: ProyectosPage,
 });
 
-// Enum para estados del proyecto (debe coincidir con el contrato)
-enum EstadoProyecto {
-  Activo = 0,
-  Completado = 1,
-  Cancelado = 2,
-}
-
-interface Proyecto {
-  id: string;
-  descripcion: string;
-  responsable: string;
-  cantidadRecaudada: string;
-  cantidadValidada: string;
-  estado: EstadoProyecto;
-  votos: string;
-}
-
-// Mock data temporal (en producción se obtendría del contrato)
-const mockProyectos: Proyecto[] = [
-  {
-    id: 'EDU-2024-001',
-    descripcion: 'Educación para niños en comunidades rurales - Construcción de biblioteca y provisión de materiales educativos',
-    responsable: '0x1234567890123456789012345678901234567890',
-    cantidadRecaudada: '8.5',
-    cantidadValidada: '6.2',
-    estado: EstadoProyecto.Activo,
-    votos: '145',
-  },
-  {
-    id: 'ALIM-2024-002',
-    descripcion: 'Alimentación para familias en situación vulnerable - Comedores comunitarios y distribución de alimentos',
-    responsable: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-    cantidadRecaudada: '12.3',
-    cantidadValidada: '12.3',
-    estado: EstadoProyecto.Completado,
-    votos: '203',
-  },
-  {
-    id: 'SALUD-2024-003',
-    descripcion: 'Atención médica en zonas de bajos recursos - Clínica móvil y medicamentos esenciales',
-    responsable: '0x9876543210987654321098765432109876543210',
-    cantidadRecaudada: '15.7',
-    cantidadValidada: '10.5',
-    estado: EstadoProyecto.Activo,
-    votos: '287',
-  },
-  {
-    id: 'VIV-2024-004',
-    descripcion: 'Viviendas dignas para familias desplazadas - Reconstrucción de hogares',
-    responsable: '0x5555555555555555555555555555555555555555',
-    cantidadRecaudada: '3.2',
-    cantidadValidada: '1.8',
-    estado: EstadoProyecto.Activo,
-    votos: '78',
-  },
-  {
-    id: 'AGUA-2024-005',
-    descripcion: 'Acceso a agua potable en comunidades aisladas',
-    responsable: '0x7777777777777777777777777777777777777777',
-    cantidadRecaudada: '5.0',
-    cantidadValidada: '0',
-    estado: EstadoProyecto.Cancelado,
-    votos: '42',
-  },
-  {
-    id: 'TECH-2024-006',
-    descripcion: 'Alfabetización digital para adultos mayores - Talleres y equipamiento tecnológico',
-    responsable: '0x3333333333333333333333333333333333333333',
-    cantidadRecaudada: '6.8',
-    cantidadValidada: '4.2',
-    estado: EstadoProyecto.Activo,
-    votos: '156',
-  },
-];
 
 function ProyectosPage() {
-  const [proyectos, setProyectos] = useState<Proyecto[]>([]);
-  const [totalProyectos, setTotalProyectos] = useState(0);
-  const [totalRecaudado, setTotalRecaudado] = useState('0');
-  const [totalValidado, setTotalValidado] = useState('0');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simular carga de datos del contrato
-    // En producción, aquí se llamarían las funciones del contrato:
-    // - obtenerTotalProyectos()
-    // - Para cada proyecto: obtenerProyecto(id)
-
-    const cargarProyectos = async () => {
-      setLoading(true);
-
-      // Simulación de delay de red
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      setProyectos(mockProyectos);
-      setTotalProyectos(mockProyectos.length);
-
-      // Calcular totales
-      const recaudado = mockProyectos.reduce(
-        (sum, p) => sum + parseFloat(p.cantidadRecaudada),
-        0
-      );
-      const validado = mockProyectos.reduce(
-        (sum, p) => sum + parseFloat(p.cantidadValidada),
-        0
-      );
-
-      setTotalRecaudado(recaudado.toFixed(2));
-      setTotalValidado(validado.toFixed(2));
-      setLoading(false);
-    };
-
-    cargarProyectos();
-  }, []);
+  const { proyectos, stats, loading, error } = useProyectos();
 
   const getEstadoChip = (estado: EstadoProyecto) => {
     switch (estado) {
@@ -243,7 +132,7 @@ function ProyectosPage() {
                       Total de Proyectos
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                      {totalProyectos}
+                      {stats.totalProyectos}
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -269,7 +158,7 @@ function ProyectosPage() {
                       </Typography>
                     </Stack>
                     <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                      {totalRecaudado} ETH
+                      {stats.totalRecaudado} ETH
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -295,7 +184,7 @@ function ProyectosPage() {
                       </Typography>
                     </Stack>
                     <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                      {totalValidado} ETH
+                      {stats.totalValidado} ETH
                     </Typography>
                   </Stack>
                 </CardContent>
@@ -316,6 +205,35 @@ function ProyectosPage() {
                 Cargando proyectos desde blockchain...
               </Typography>
               <LinearProgress sx={{ mt: 2, maxWidth: 400, mx: 'auto' }} />
+            </Box>
+          ) : error ? (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Card
+                sx={{
+                  maxWidth: 600,
+                  mx: 'auto',
+                  bgcolor: 'error.light',
+                  color: 'error.contrastText',
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Error al cargar proyectos
+                  </Typography>
+                  <Typography variant="body2">
+                    {error}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 2, opacity: 0.9 }}>
+                    Asegúrate de tener MetaMask instalado y conectado a la red correcta.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+          ) : proyectos.length === 0 ? (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Typography variant="h6" color="text.secondary">
+                No hay proyectos registrados aún
+              </Typography>
             </Box>
           ) : (
             <Grid container spacing={3}>
