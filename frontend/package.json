@@ -19,6 +19,8 @@
     "@mui/x-tree-view": "^8.22.0",
     "@react-spring/web": "^10.0.3",
     "@tanstack/react-devtools": "^0.7.0",
+    "@tanstack/react-query": "^5.90.15",
+    "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",

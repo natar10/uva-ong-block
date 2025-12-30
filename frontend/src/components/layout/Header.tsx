@@ -17,12 +17,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import HomeIcon from '@mui/icons-material/Home';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import FolderIcon from '@mui/icons-material/Folder';
+import ListAlt from '@mui/icons-material/ListAlt';
 import { useState } from 'react';
 
 const menuItems = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
   { label: 'Donar', path: '/donar', icon: <VolunteerActivismIcon /> },
   { label: 'Proyectos', path: '/proyectos', icon: <FolderIcon /> },
+  { label: 'Donaciones', path: '/donaciones', icon: <ListAlt /> },
 ];
 
 export default function Header() {

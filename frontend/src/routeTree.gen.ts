@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as ProyectosIndexRouteImport } from './routes/proyectos/index'
 import { Route as DonarIndexRouteImport } from './routes/donar/index'
+import { Route as DonacionesIndexRouteImport } from './routes/donaciones/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const DonarIndexRoute = DonarIndexRouteImport.update({
   path: '/donar/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DonacionesIndexRoute = DonacionesIndexRouteImport.update({
+  id: '/donaciones/',
+  path: '/donaciones/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
@@ -44,6 +50,7 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/donaciones': typeof DonacionesIndexRoute
   '/donar': typeof DonarIndexRoute
   '/proyectos': typeof ProyectosIndexRoute
   '/test': typeof TestIndexRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/donaciones': typeof DonacionesIndexRoute
   '/donar': typeof DonarIndexRoute
   '/proyectos': typeof ProyectosIndexRoute
   '/test': typeof TestIndexRoute
@@ -59,21 +67,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/donaciones/': typeof DonacionesIndexRoute
   '/donar/': typeof DonarIndexRoute
   '/proyectos/': typeof ProyectosIndexRoute
   '/test/': typeof TestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/donar' | '/proyectos' | '/test'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/donaciones'
+    | '/donar'
+    | '/proyectos'
+    | '/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/donar' | '/proyectos' | '/test'
-  id: '__root__' | '/' | '/dashboard/' | '/donar/' | '/proyectos/' | '/test/'
+  to: '/' | '/dashboard' | '/donaciones' | '/donar' | '/proyectos' | '/test'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard/'
+    | '/donaciones/'
+    | '/donar/'
+    | '/proyectos/'
+    | '/test/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DonacionesIndexRoute: typeof DonacionesIndexRoute
   DonarIndexRoute: typeof DonarIndexRoute
   ProyectosIndexRoute: typeof ProyectosIndexRoute
   TestIndexRoute: typeof TestIndexRoute
@@ -109,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/donaciones/': {
+      id: '/donaciones/'
+      path: '/donaciones'
+      fullPath: '/donaciones'
+      preLoaderRoute: typeof DonacionesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/dashboard'
@@ -122,6 +152,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DonacionesIndexRoute: DonacionesIndexRoute,
   DonarIndexRoute: DonarIndexRoute,
   ProyectosIndexRoute: ProyectosIndexRoute,
   TestIndexRoute: TestIndexRoute,

@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider';
 import HomeIcon from '@mui/icons-material/Home';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import FolderIcon from '@mui/icons-material/Folder';
+import ListAlt from '@mui/icons-material/ListAlt';
 
 export default function Footer() {
   return (
@@ -107,6 +108,23 @@ export default function Footer() {
               >
                 <FolderIcon sx={{ fontSize: 18 }} />
                 <Typography variant="body2">Proyectos</Typography>
+              </MuiLink>
+              <MuiLink
+                component={Link}
+                to="/donaciones"
+                underline="hover"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main',
+                  },
+                }}
+              >
+                <ListAlt sx={{ fontSize: 18 }} />
+                <Typography variant="body2">Donaciones</Typography>
               </MuiLink>
             </Stack>
           </Grid>
