@@ -34,6 +34,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useRegistrarDonante, TipoDonante } from '../../hooks/useRegistrarDonante';
 import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
 import { useDonante } from '../../hooks/useDonante';
+import Divider from '@mui/material/Divider';
 
 export const Route = createFileRoute('/donar/')({
   component: DonarPage,
@@ -201,6 +202,29 @@ function DonarPage() {
               Contribuye a proyectos que cambian vidas. Cada donación es
               registrada de forma transparente en blockchain.
             </Typography>
+
+
+
+              <Card variant="highlighted">
+                <Box sx={{ p: 2 }}>
+                  <Stack
+                    direction="row"
+                    gap={4}
+                    sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                  >
+                    <Typography gutterBottom variant="h5" component="div">
+                      Estas donando como: <u>{nombre}</u>
+                    </Typography>
+                    <Chip label={`${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`} color="primary" />
+                  </Stack>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Tu tipo de donante: <Chip label={tipoDonante === TipoDonante.Individual ? 'Individual' : 'Empresa'} color="default" />
+                  </Typography>
+                  
+                </Box>
+              </Card>
+
           </Stack>
         </Container>
 
@@ -216,6 +240,7 @@ function DonarPage() {
         </Container>
 
         <Container maxWidth="lg">
+
           {/* Paso 1: Conectar Wallet */}
           {activeStep === 0 && (
             <Card sx={{ maxWidth: 600, mx: 'auto' }}>
@@ -366,11 +391,6 @@ function DonarPage() {
           {/* Paso 3: Seleccionar Proyecto */}
           {activeStep === 2 && (
             <Box>
-              
-              <Typography variant="h4" textAlign="center" sx={{ mb: 4, color: 'black' }}>
-                Estás donando con la wallet: {walletAddress.substring(0, 6)}...{walletAddress.substring(38)}
-              </Typography>
-
               <Typography variant="h4" textAlign="center" sx={{ mb: 4, color: 'black' }}>
                 Selecciona un Proyecto
               </Typography>
