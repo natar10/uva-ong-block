@@ -61,6 +61,7 @@ contract ONGDonaciones {
     event DonacionRealizada(address indexed donante, string proyectoId, uint256 cantidad);
     event ProyectoCreado(string id, string descripcion);
     event DonanteRegistrado(address indexed direccion, string nombre);
+    event VotacionRealizada(address indexed donante, string proyectoId, uint256 cantidad_votos);
     
     // ============================================
     // CONSTRUCTOR (se ejecuta al desplegar)
@@ -165,7 +166,25 @@ contract ONGDonaciones {
         proyectos[_proyectoId].cantidadRecaudada += msg.value;
         
         emit DonacionRealizada(msg.sender, _proyectoId, msg.value);
+
     }
+
+    /**
+     * Realizar votación
+     */
+    function votarProyecto(string memory _proyectoId, uint256 _cantidadVotos) public { // No es payable porque usamos token interno, no ETH
+        require(donantes[msg.sender].direccion != address(0), "No registrado");
+        require(proyectos[_proyectoId].estado == EstadoProyecto.Activo, "Proyecto no activo");
+        require(donantes[msg.sender].tokensGobernanza >= _cantidadVotos, "Tokens insuficientes");
+        
+
+        donantes[msg.sender].tokensGobernanza -= _cantidadVotos;
+        proyectos[_proyectoId].votos += _cantidadVotos;
+
+        emit VotacionRealizada(msg.sender, _proyectoId, _cantidadVotos);
+    }
+
+
     
     /**
      * Validar fondos de un proyecto (owner marca como validado)
