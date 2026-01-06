@@ -18,6 +18,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import FolderIcon from '@mui/icons-material/Folder';
 import ListAlt from '@mui/icons-material/ListAlt';
+import PeopleIcon from '@mui/icons-material/People'; // ícono voluntarios
+
 import { useState } from 'react';
 
 const menuItems = [
@@ -25,6 +27,7 @@ const menuItems = [
   { label: 'Donar', path: '/donar', icon: <VolunteerActivismIcon /> },
   { label: 'Proyectos', path: '/proyectos', icon: <FolderIcon /> },
   { label: 'Donaciones', path: '/donaciones', icon: <ListAlt /> },
+  { label: 'Voluntarios', path: '/voluntarios', icon: <PeopleIcon /> }, // voluntarios
 ];
 
 export default function Header() {
