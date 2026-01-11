@@ -22,6 +22,56 @@
 					{
 						"indexed": false,
 						"internalType": "string",
+						"name": "compradorId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "valor_compra",
+						"type": "uint256"
+					}
+				],
+				"name": "CompraRealizada",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "compraId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					}
+				],
+				"name": "CompraValidada",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "donante",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
 						"name": "proyectoId",
 						"type": "string"
 					},
@@ -114,6 +164,55 @@
 				"name": "cambiarEstadoProyecto",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "compras",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "comprador",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fecha",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "validada",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -228,6 +327,25 @@
 				"name": "donar",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "listaCompras",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -553,6 +671,29 @@
 				"inputs": [
 					{
 						"internalType": "string",
+						"name": "_compraId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "_proveedor",
+						"type": "address"
+					}
+				],
+				"name": "realizarCompra",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
 						"name": "_nombre",
 						"type": "string"
 					},
@@ -570,6 +711,19 @@
 			{
 				"inputs": [],
 				"name": "retirarFondos",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_compraId",
+						"type": "string"
+					}
+				],
+				"name": "validarCompra",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -645,7 +799,7 @@
 		"compilationTarget": {
 			"backend/contracts/ONGDonaciones.sol": "ONGDonaciones"
 		},
-		"evmVersion": "osaka",
+		"evmVersion": "london",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -658,11 +812,11 @@
 	},
 	"sources": {
 		"backend/contracts/ONGDonaciones.sol": {
-			"keccak256": "0x3fa1950b13b67b41e1b45c065dcc4ae89681f6065d6526b903cfd828eac77026",
+			"keccak256": "0x70cc4cfc52fe6e32c40e69dc6bef2afa16201e73fc91118c00f53bfe61c1414d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://07c56ad2a76825a78c6eb774ec7ad6e7011c1aaa65d3779fbaa2195f61b26656",
-				"dweb:/ipfs/QmTHRKpQnQC5y4k8KCC2EivUXgTGo9oHUGGDt9MxkfK52d"
+				"bzz-raw://d8c403d59f17962bef12a456623caa9c2bd30265011c4753b2861c7bd95989f0",
+				"dweb:/ipfs/QmZBwgoUcM2t7PE2PwtinJvqTYGZd8csD31VpTJLeg7kFv"
 			]
 		}
 	},
