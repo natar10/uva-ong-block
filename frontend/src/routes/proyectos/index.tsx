@@ -21,15 +21,95 @@ import { alpha } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
-import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
+import { useProyectos, EstadoProyecto, type Proyecto } from '../../hooks/useProyectos';
+import { useDonante } from '../../hooks/useDonante';
+import { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import Button from '@mui/material/Button';
+import { useContract } from '@/hooks/useContract';
+
 
 export const Route = createFileRoute('/proyectos/')({
   component: ProyectosPage,
 });
 
+export interface VotacionParams {
+  proyectoId: string;
+  votos:number;
+}
+
+export interface VotacionResult {
+  success: boolean;
+  transactionHash?: string;
+  message: string;
+}
+
+export const realizarVotacion = async (
+  getContract: () => Promise<any>,
+  params : VotacionParams
+): Promise<VotacionResult> =>{
+  console.log('Votando al proyecto:', params);
+
+  try {
+    // Obtener contrato
+    const contract = await getContract();
+
+    // Llamar a la funcion de voatcion
+    const tx = await contract.votarProyecto(params.proyectoId, params.votos);
+
+    
+    console.log('Transacción enviada:', tx.hash);
+
+    // Esperar confirmación
+    const receipt = await tx.wait();
+
+    console.log('✓ Donación realizada exitosamente');
+    return {
+      success: true,
+      transactionHash: receipt.hash,
+      message: `Votacion realizada existosamente`,
+    };
+  }catch (error: any) {
+    console.error('Error al realizar donación:', error);
+
+    // Extraer mensaje de error más específico
+    let errorMessage = 'Error al realizar la donación';
+
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = 'Transacción rechazada por el usuario';
+    } else if (error.code === 'INSUFFICIENT_FUNDS') {
+      errorMessage = 'Fondos insuficientes para realizar la donación';
+    } else if (error.reason) {
+      errorMessage = error.reason;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    throw new Error(errorMessage);
+  }
+}
 
 function ProyectosPage() {
+  const [open, setOpen] = useState(false);
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<Proyecto | null>(null);
+
+  const handleOpen = (proyecto:Proyecto) => {
+    setProyectoSeleccionado(proyecto);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false); 
+    setProyectoSeleccionado(null);
+  };
+
+  const { getContract } = useContract(); // Contrato usado para las voatciones
+
   const { proyectos, stats, loading, error } = useProyectos();
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [tokens, setTokens] = useState(1);
+  const { donante, isRegistered, loading: loadingDonante } = useDonante(
+      walletConnected ? walletAddress : null
+    );
 
   const getEstadoChip = (estado: EstadoProyecto) => {
     switch (estado) {
@@ -62,6 +142,11 @@ function ProyectosPage() {
         );
     }
   };
+  
+  const calcularTokensGobernanza = () => {
+    if (!donante) return 0;
+    return donante.tokensGobernanza;
+  }
 
   const calcularPorcentajeValidado = (recaudado: string, validado: string) => {
     const rec = parseFloat(recaudado);
@@ -102,7 +187,7 @@ function ProyectosPage() {
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-              }}
+                }}
             >
               Proyectos de la ONG
             </Typography>
@@ -237,7 +322,7 @@ function ProyectosPage() {
             </Box>
           ) : (
             <Grid container spacing={3}>
-              {proyectos.map((proyecto) => {
+              {proyectos.map((proyecto: Proyecto) => {
                 const porcentajeValidado = calcularPorcentajeValidado(
                   proyecto.cantidadRecaudada,
                   proyecto.cantidadValidada
@@ -298,7 +383,20 @@ function ProyectosPage() {
                                 <Typography variant="body2" color="text.secondary">
                                   <strong>Votos recibidos:</strong> {proyecto.votos}
                                 </Typography>
+
+                                <button 
+                                  variant="contained"
+                                  sx={{ ml: 'auto' }}
+                                  onClick={() =>handleOpen(proyecto)}
+                                  style={{ marginLeft: 'auto' }}
+                                >
+                                  <Typography variant="body2">
+                                    Votar Proyecto
+                                  </Typography>
+                                </button>
+                                
                               </Stack>
+
                             </Stack>
                           </Grid>
 
@@ -446,6 +544,58 @@ function ProyectosPage() {
           </Card>
         </Container>
       </Box>
+
+      // Modal de confirmación del voto (aparece co clickar el botón "Votar Proyecto")
+
+      
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle>¿Cuántos tokens quieres utilizar en el proyecto {proyectoSeleccionado?.id} (cada token cuenta como un voto)?</DialogTitle>
+
+        <DialogContent>
+          <Typography>
+            Tokens disponibles: {calcularTokensGobernanza()}
+          </Typography>
+
+          <Typography>
+            Tokens a utilizar: 
+            <input
+              type="number"
+              min={0}
+              max={calcularTokensGobernanza()}
+              value={tokens}
+              onChange={(e) => setTokens(Number(e.target.value))}
+              style={{ textAlign: "right" }}
+            />
+          </Typography>
+          
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleClose}>
+            Cancelar
+          </Button>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              // TODO: lógica para votar
+              realizarVotacion( getContract,{
+                proyectoId: proyectoSeleccionado?.id,
+                votos: tokens
+              }).then((result)=>{
+                console.log(result);
+              })
+              handleClose();
+            }}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
+
       <Footer />
     </AppTheme>
   );
