@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import {
-  Button,
   TextField,
   Stack,
   Typography,
@@ -15,8 +14,6 @@ import {
   TableRow,
   Paper,
   Box,
-  Chip,
-  CircularProgress,
   Container,
   InputAdornment,
   IconButton,
@@ -25,7 +22,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 
-import { useVoluntarios } from '../../hooks/useVoluntarios';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import AppTheme from '../../shared-theme/AppTheme';
@@ -37,10 +33,7 @@ export const Route = createFileRoute('/voluntarios/')({
 
 // --- Componente Voluntarios
 function VoluntariosPage() {
-  const [projectId, setProjectId] = useState('');
-  const [monto, setMonto] = useState('');
   const [filtroProyecto, setFiltroProyecto] = useState('');
-  const { validarProyecto, retirarTodo, loading } = useVoluntarios();
 
   // Datos simulados (temporal, puedes reemplazar con blockchain real más adelante)
   const datosSimulados = useMemo(() => {
@@ -78,7 +71,7 @@ function VoluntariosPage() {
         {/* Hero */}
         <Stack spacing={3} alignItems="center" textAlign="center" sx={{ mb: 6 }}>
           <ReceiptIcon sx={{ fontSize: 60, color: 'primary.main' }} />
-          <Typography variant="h2" sx={{ fontWeight: 800 }}>
+          <Typography variant="h2" sx={{ fontWeight: 800, color: 'black' }}>
             Registro de Voluntarios
           </Typography>
           <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 700 }}>
