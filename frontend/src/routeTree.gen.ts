@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VoluntariosIndexRouteImport } from './routes/voluntarios/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as ProyectosIndexRouteImport } from './routes/proyectos/index'
 import { Route as DonarIndexRouteImport } from './routes/donar/index'
@@ -19,6 +20,11 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoluntariosIndexRoute = VoluntariosIndexRouteImport.update({
+  id: '/voluntarios/',
+  path: '/voluntarios/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestIndexRoute = TestIndexRouteImport.update({
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/donar': typeof DonarIndexRoute
   '/proyectos': typeof ProyectosIndexRoute
   '/test': typeof TestIndexRoute
+  '/voluntarios': typeof VoluntariosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/donar': typeof DonarIndexRoute
   '/proyectos': typeof ProyectosIndexRoute
   '/test': typeof TestIndexRoute
+  '/voluntarios': typeof VoluntariosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/donar/': typeof DonarIndexRoute
   '/proyectos/': typeof ProyectosIndexRoute
   '/test/': typeof TestIndexRoute
+  '/voluntarios/': typeof VoluntariosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,8 +90,16 @@ export interface FileRouteTypes {
     | '/donar'
     | '/proyectos'
     | '/test'
+    | '/voluntarios'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/donaciones' | '/donar' | '/proyectos' | '/test'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/donaciones'
+    | '/donar'
+    | '/proyectos'
+    | '/test'
+    | '/voluntarios'
   id:
     | '__root__'
     | '/'
@@ -91,6 +108,7 @@ export interface FileRouteTypes {
     | '/donar/'
     | '/proyectos/'
     | '/test/'
+    | '/voluntarios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -100,6 +118,7 @@ export interface RootRouteChildren {
   DonarIndexRoute: typeof DonarIndexRoute
   ProyectosIndexRoute: typeof ProyectosIndexRoute
   TestIndexRoute: typeof TestIndexRoute
+  VoluntariosIndexRoute: typeof VoluntariosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voluntarios/': {
+      id: '/voluntarios/'
+      path: '/voluntarios'
+      fullPath: '/voluntarios'
+      preLoaderRoute: typeof VoluntariosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test/': {
@@ -156,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   DonarIndexRoute: DonarIndexRoute,
   ProyectosIndexRoute: ProyectosIndexRoute,
   TestIndexRoute: TestIndexRoute,
+  VoluntariosIndexRoute: VoluntariosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
