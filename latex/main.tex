@@ -1,0 +1,85 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[spanish]{babel}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{newunicodechar}
+\newunicodechar{├}{|}
+\usepackage{url}
+\usepackage[margin=2.5cm]{geometry}
+
+% Configuración para bash
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% Configuración de colores para hipervínculos (estilo APA)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    linktoc=all
+}
+
+\title{
+    \includegraphics[width=0.7\textwidth]{./assets/UVA-Logo.jpg}\\[1cm]
+    Gobernanza Descentralizada para Organizaciones No Gubernamentales\\[0.2cm]
+    Implementación en Besu\\[2.5cm]
+}
+
+\author{
+    Martin Villafruela, Jorge \\
+    Rocha Gallo, Nataly \\
+    Ureña, Loly
+}
+
+\date{\today}
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+%---------------------------------------------
+% PUNTO 2
+%---------------------------------------------
+
+%-------Descripcion del sistema-----
+\input{sections/descripcion}
+
+%-------Decisiones y simplicaciones de diseño inicial-----
+\input{sections/simplificacino}
+
+%-------Implementación en Besu-----
+\input{sections/implementacion_besu}
+
+%-------Implementación del front end-----
+\input{sections/implementacion_frontend}
+
+%-------Conclusiones-----
+\input{sections/conclusiones}
+
+\newpage
+\bibliographystyle{acm}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,113 @@
+\section{Implementación en Besu}
+
+El contrato inteligente fue desarrollado en Solidity y desplegado en una red Hyperledger Besu utilizando Remix IDE. Esta sección describe la arquitectura del contrato, sus funciones principales y las consideraciones técnicas encontradas durante el despliegue.
+
+\subsection{Arquitectura del contrato}
+
+El contrato \texttt{ONGDonaciones.sol} implementa un diseño modular con las siguientes estructuras de datos:
+
+\begin{itemize}
+    \item \textbf{Estructuras (Structs):}
+    \begin{itemize}
+        \item \texttt{Donante}: almacena dirección, nombre, tipo, total donado y tokens de gobernanza
+        \item \texttt{Proyecto}: contiene ID, descripción, responsable, cantidades recaudada y validada, estado y votos
+        \item \texttt{Donacion}: registra ID, donante, proyecto, cantidad y timestamp
+    \end{itemize}
+
+    \item \textbf{Mapeos (Mappings):}
+    \begin{itemize}
+        \item \texttt{mapping(address => Donante) donantes}
+        \item \texttt{mapping(string => Proyecto) proyectos}
+        \item \texttt{mapping(string => Donacion) donaciones}
+    \end{itemize}
+
+    \item \textbf{Arrays para iteración:}
+    \begin{itemize}
+        \item \texttt{address[] listaDonantes}
+        \item \texttt{string[] listaProyectos}
+        \item \texttt{string[] listaDonaciones}
+    \end{itemize}
+\end{itemize}
+
+Esta combinación de mappings para acceso directo y arrays para iteración permite tanto búsquedas eficientes como la capacidad de listar todos los registros desde el frontend.
+
+\subsection{Funciones principales}
+
+El contrato implementa las siguientes operaciones:
+
+\subsubsection{Funciones de escritura}
+
+\begin{itemize}
+    \item \texttt{registrarDonante(string nombre, TipoDonante tipo)}: Permite a un usuario registrarse como donante. Verifica que no esté previamente registrado.
+
+    \item \texttt{crearProyecto(string id, string descripcion, address responsable)}: Función restringida al owner para crear nuevos proyectos. Valida que el ID no exista previamente.
+
+    \item \texttt{donar(string proyectoId) payable}: Función principal que procesa donaciones. Recibe ETH, registra la donación, actualiza totales y asigna tokens de gobernanza (1 token por ETH). Si el donante no está registrado, lo crea automáticamente como individuo.
+
+    \item \texttt{votarProyecto(string proyectoId, uint256 cantidadVotos)}: Permite a los donantes gastar sus tokens para votar por proyectos. Verifica que el donante tenga tokens suficientes y que el proyecto esté activo.
+
+    \item \texttt{validarFondosProyecto(string proyectoId, uint256 cantidad)}: Función administrativa para marcar fondos como validados/gastados.
+
+    \item \texttt{cambiarEstadoProyecto(string proyectoId, EstadoProyecto nuevoEstado)}: Permite al owner cambiar el estado de un proyecto (Activo/Cancelado).
+\end{itemize}
+
+\subsubsection{Funciones de lectura}
+
+El contrato incluye funciones de consulta que no modifican el estado:
+
+\begin{itemize}
+    \item \texttt{obtenerDonante(address)}, \texttt{obtenerProyecto(string)}, \texttt{obtenerDonacion(string)}
+    \item \texttt{obtenerTotalDonantes()}, \texttt{obtenerTotalProyectos()}, \texttt{obtenerTotalDonaciones()}
+    \item \texttt{obtenerBalance()}: retorna el balance de ETH del contrato
+\end{itemize}
+
+\subsection{Control de acceso}
+
+Se implementa un sistema de permisos básico mediante el modificador \texttt{soloOwner}, que restringe funciones críticas al propietario del contrato:
+
+\begin{lstlisting}[language=Solidity]
+modifier soloOwner() {
+    require(msg.sender == owner,
+            "Solo el owner puede ejecutar esto");
+    _;
+}
+\end{lstlisting}
+
+El owner se establece en el constructor como la dirección que despliega el contrato.
+
+\subsection{Eventos}
+
+Para facilitar la integración con el frontend y permitir el seguimiento de operaciones, se definieron los siguientes eventos:
+
+\begin{itemize}
+    \item \texttt{DonacionRealizada(address indexed donante, string proyectoId, uint256 cantidad)}
+    \item \texttt{ProyectoCreado(string id, string descripcion)}
+    \item \texttt{DonanteRegistrado(address indexed direccion, string nombre)}
+    \item \texttt{VotacionRealizada(address indexed donante, string proyectoId, uint256 cantidad\_votos)}
+\end{itemize}
+
+\subsection{Proceso de despliegue}
+
+El contrato fue desplegado utilizando Remix IDE conectado a la red BLOCK LAB de Besu. El proceso incluyó:
+
+\begin{enumerate}
+    \item Compilación del contrato con Solidity 0.8.0
+    \item Conexión de MetaMask a la red BLOCK LAB
+    \item Configuración de permisos de dominio en MetaMask
+    \item Despliegue mediante Remix utilizando el injected provider
+    \item Obtención de la dirección del contrato desplegado
+\end{enumerate}
+
+\subsection{Consideraciones técnicas importantes}
+
+Durante la implementación y despliegue se identificaron varios aspectos críticos:
+
+\begin{itemize}
+    \item \textbf{Permisos de red en MetaMask:} Es fundamental configurar correctamente los permisos para el dominio específico en MetaMask, asegurando que la extensión utilice la red BLOCK LAB. Sin esta configuración, suelen aparecer problemas de conexión.
+
+    \item \textbf{Inmutabilidad de contratos:} Los contratos en blockchain no son editables una vez desplegados. Cualquier modificación requiere desplegar un nuevo contrato con una nueva dirección, lo que implica actualizar la configuración en el frontend.
+
+    \item \textbf{Coordinación frontend-contrato:} La dirección del contrato debe actualizarse manualmente en el archivo de configuración del frontend cada vez que se despliega una nueva versión.
+
+    \item \textbf{Gas y costos:} Aunque Besu no requiere ETH real, se debe tener en cuenta el concepto de gas para futuras implementaciones en redes públicas.
+\end{itemize}

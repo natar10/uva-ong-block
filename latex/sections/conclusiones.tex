@@ -1,0 +1,105 @@
+\section{Conclusiones}
+
+Este proyecto demuestra la viabilidad de implementar un sistema de gobernanza descentralizada para ONGs utilizando tecnología blockchain. A través del desarrollo del contrato \texttt{ONGDonaciones} y su integración con un frontend moderno, se han alcanzado los objetivos principales de transparencia y participación democrática.
+
+\subsection{Logros alcanzados}
+
+\subsubsection{Transparencia financiera}
+
+El sistema implementado proporciona trazabilidad completa de las donaciones. Cada transacción queda registrada de forma inmutable en la blockchain, permitiendo a cualquier persona verificar:
+
+\begin{itemize}
+    \item El origen de cada donación (dirección del donante)
+    \item El destino específico de los fondos (proyecto beneficiado)
+    \item El momento exacto de la transacción (timestamp)
+    \item El total recaudado y validado para cada proyecto
+\end{itemize}
+
+Esta transparencia elimina la dependencia de auditorías periódicas tradicionales, proporcionando verificación continua y en tiempo real.
+
+\subsubsection{Gobernanza democrática}
+
+El mecanismo de tokens de gobernanza permite la participación directa de los donantes en las decisiones sobre priorización de proyectos. Aunque simplificado respecto al diseño original, el sistema implementado cumple con el objetivo de democratizar la toma de decisiones, otorgando poder de voto proporcional a las contribuciones realizadas.
+
+\subsubsection{Aprendizajes técnicos}
+
+La implementación proporcionó experiencia práctica en:
+
+\begin{itemize}
+    \item Desarrollo de contratos inteligentes en Solidity
+    \item Despliegue en Hyperledger Besu utilizando Remix
+    \item Integración frontend-blockchain mediante ethers.js
+    \item Gestión de billeteras con MetaMask
+    \item Configuración de permisos y redes personalizadas
+    \item Manejo de transacciones síncronas y asíncronas
+\end{itemize}
+
+\subsection{Desafíos identificados}
+
+\subsubsection{Inmutabilidad como obstáculo y virtud}
+
+La característica inmutable de los contratos blockchain presenta un dilema: garantiza que las reglas no pueden modificarse arbitrariamente (virtud para la transparencia), pero dificulta corregir errores o implementar mejoras (obstáculo para el desarrollo iterativo). Cada modificación requiere desplegar un nuevo contrato, migrar datos si es necesario y actualizar todas las integraciones.
+
+\subsubsection{Complejidad de configuración}
+
+La configuración correcta de MetaMask, especialmente los permisos de red por dominio, resultó ser un punto crítico. Esta barrera técnica podría dificultar la adopción por usuarios no técnicos, requiriendo interfaces más amigables o documentación exhaustiva.
+
+\subsubsection{Coordinación frontend-contrato}
+
+La necesidad de actualizar manualmente la dirección del contrato en el frontend tras cada despliegue introduce un punto de fricción en el flujo de desarrollo. Aunque existen soluciones como sistemas de nombres (ENS) o proxies actualizables, estas añaden complejidad adicional.
+
+\subsection{Simplificaciones y su impacto}
+
+Las decisiones de simplificación tomadas durante la implementación tuvieron efectos mixtos:
+
+\textbf{Aspectos positivos:}
+\begin{itemize}
+    \item Mayor facilidad de comprensión del código
+    \item Menos superficie de ataque para vulnerabilidades
+    \item Desarrollo más rápido y debugging simplificado
+    \item Menor costo de gas en cada operación
+\end{itemize}
+
+\textbf{Funcionalidades perdidas:}
+\begin{itemize}
+    \item No hay control automático de distribución de fondos
+    \item Falta el mecanismo de proveedores verificados
+    \item No se implementó la cuenta administrativa separada
+    \item Sin ciclos de votación con renovación de tokens
+\end{itemize}
+
+\subsection{Trabajo futuro}
+
+Para evolucionar este proyecto hacia un sistema de producción, se identifican las siguientes áreas de mejora:
+
+\begin{enumerate}
+    \item \textbf{Implementar distribución automática:} Recuperar la lógica de porcentajes del diseño original para automatizar la asignación de fondos según votaciones.
+
+    \item \textbf{Sistema de proveedores:} Añadir registro y validación de proveedores autorizados para completar el ciclo de trazabilidad hasta el gasto final.
+
+    \item \textbf{Mejoras de seguridad:}
+    \begin{itemize}
+        \item Implementar pausado de emergencia (circuit breaker)
+        \item Añadir límites máximos por transacción
+        \item Incluir mecanismos de recuperación ante errores
+    \end{itemize}
+
+    \item \textbf{Optimización de gas:} Revisar estructuras de datos y lógica para reducir costos de transacción, especialmente importante si se migra a redes públicas.
+
+    \item \textbf{Interfaz mejorada:}
+    \begin{itemize}
+        \item Simplificar el proceso de configuración de MetaMask
+        \item Añadir visualizaciones gráficas de distribución de fondos
+        \item Implementar notificaciones en tiempo real de eventos blockchain
+    \end{itemize}
+
+    \item \textbf{Testing exhaustivo:} Desarrollar suite completa de tests unitarios y de integración utilizando Hardhat o Foundry.
+
+    \item \textbf{Auditoría de seguridad:} Antes de manejar fondos reales, realizar auditoría profesional del contrato.
+\end{enumerate}
+
+\subsection{Reflexión final}
+
+Este proyecto ilustra tanto el potencial como los desafíos de aplicar blockchain a problemas del mundo real. La tecnología proporciona garantías únicas de transparencia e inmutabilidad que son valiosas para organizaciones que manejan fondos públicos. Sin embargo, la complejidad técnica y las limitaciones de la inmutabilidad requieren un balance cuidadoso entre ambición y practicidad.
+
+El sistema implementado, aunque simplificado, demuestra que es posible construir aplicaciones blockchain funcionales que aporten valor real. La experiencia adquirida en este proyecto proporciona una base sólida para comprender los trade-offs inherentes a esta tecnología y tomar decisiones de diseño informadas en futuros desarrollos.

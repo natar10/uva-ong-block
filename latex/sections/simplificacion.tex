@@ -1,0 +1,50 @@
+\section{Simplificación en base al diseño inicial}
+
+Durante la fase conceptual se diseñó un sistema ambicioso que incluía múltiples actores, mecanismos complejos de distribución de fondos, gestión de proveedores y un sistema de votaciones con ciclos anuales. Sin embargo, al enfrentar la implementación práctica se tomaron decisiones de simplificación para garantizar un sistema funcional y comprensible.
+
+\subsection{Elementos eliminados del diseño original}
+
+El modelo conceptual contemplaba diversos componentes que fueron descartados en la implementación:
+
+\begin{itemize}
+    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados (constructoras, distribuidores de material educativo, editoriales) con historial de compras. Este mecanismo fue eliminado para simplificar el flujo de fondos.
+
+    \item \textbf{Administración ONG con billetera separada:} Se planeaba una cuenta administrativa que recibiría automáticamente el 20\% de cada donación para gastos logísticos. Esta funcionalidad no se implementó.
+
+    \item \textbf{Distribución porcentual automática:} El sistema original contemplaba que cada donación se distribuyera según porcentajes predefinidos (20\% a administración, 30\% equitativo entre proyectos sin meta, 50\% según votaciones). Este mecanismo complejo fue descartado.
+
+    \item \textbf{Ciclos de votación y quema de tokens:} Se diseñó un sistema de votaciones anuales donde los tokens no utilizados se quemaban al final del ciclo. La implementación actual permite votaciones continuas sin restricciones temporales.
+
+    \item \textbf{Metas de donación y redistribución:} El diseño conceptual incluía metas para cada proyecto y redistribución automática de fondos cuando un proyecto era cancelado. Estas reglas no fueron implementadas.
+
+    \item \textbf{Distinción entre tipos de donante para tokens:} Aunque el contrato mantiene el enum \texttt{TipoDonante}, no se implementó la regla diferencial de asignación de tokens (raíz cuadrada para empresas vs. proporcional para individuos).
+\end{itemize}
+
+\subsection{Sistema implementado}
+
+El contrato final \texttt{ONGDonaciones.sol} se centra en las funcionalidades esenciales:
+
+\begin{itemize}
+    \item \textbf{Estructura de datos simplificada:} Se mantienen tres estructuras principales: \texttt{Donante}, \texttt{Proyecto} y \texttt{Donacion}, eliminando la complejidad de proveedores y administración.
+
+    \item \textbf{Flujo directo de donaciones:} Los fondos van directamente al proyecto especificado sin distribución porcentual automática.
+
+    \item \textbf{Tokens de gobernanza básicos:} Se asigna 1 token por cada ETH donado, sin distinción por tipo de donante.
+
+    \item \textbf{Votación simplificada:} Los donantes pueden votar en cualquier momento, gastando sus tokens para incrementar el contador de votos del proyecto.
+
+    \item \textbf{Control de acceso básico:} Solo el owner puede crear proyectos, validar fondos y cambiar estados, implementado mediante el modificador \texttt{soloOwner}.
+\end{itemize}
+
+\subsection{Justificación de las simplificaciones}
+
+Estas decisiones responden a criterios de viabilidad técnica y pedagógica:
+
+\begin{enumerate}
+    \item \textbf{Reducción de complejidad:} Un contrato más simple es más fácil de auditar, probar y mantener.
+    \item \textbf{Enfoque en funcionalidades core:} Se priorizaron las capacidades esenciales de trazabilidad y gobernanza.
+    \item \textbf{Facilita la comprensión:} Un sistema menos complejo permite entender mejor los conceptos fundamentales de blockchain.
+    \item \textbf{Menor superficie de ataque:} Menos código significa menos vectores potenciales de vulnerabilidades.
+\end{enumerate}
+
+A pesar de estas simplificaciones, el sistema implementado cumple con los objetivos principales: proporcionar transparencia en las donaciones y permitir la participación democrática mediante votaciones.

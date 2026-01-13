@@ -1,0 +1,39 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Descripción general del sistema}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Objetivo}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Actores principales}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Flujo operativo}{4}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Implementación en Besu}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Arquitectura del contrato}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Funciones principales}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Funciones de escritura}{5}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Funciones de lectura}{6}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Control de acceso}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Eventos}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Proceso de despliegue}{6}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Consideraciones técnicas importantes}{7}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Implementación del front end}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tecnologías utilizadas}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Arquitectura del frontend}{7}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Hooks personalizados}{7}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Capa de datos}{8}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Configuración del contrato}{8}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Funcionalidades implementadas}{8}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Integración con MetaMask}{8}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Consideraciones importantes}{9}{subsubsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.5}Manejo de transacciones}{9}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Diseño de interfaz}{9}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Despliegue}{9}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Lecciones aprendidas}{10}{subsection.3.8}%
+\contentsline {section}{\numberline {4}Conclusiones}{10}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Logros alcanzados}{10}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Transparencia financiera}{10}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Gobernanza democrática}{10}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Aprendizajes técnicos}{11}{subsubsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.2}Desafíos identificados}{11}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Inmutabilidad como obstáculo y virtud}{11}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Complejidad de configuración}{11}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Coordinación frontend-contrato}{11}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Simplificaciones y su impacto}{11}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Trabajo futuro}{12}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Reflexión final}{12}{subsection.4.5}%
