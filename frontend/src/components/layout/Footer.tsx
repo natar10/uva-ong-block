@@ -10,8 +10,46 @@ import HomeIcon from '@mui/icons-material/Home';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import FolderIcon from '@mui/icons-material/Folder';
 import ListAlt from '@mui/icons-material/ListAlt';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+
+import { useState, useEffect } from 'react';
+import { useIsOwner } from '../../hooks/useIsOwner';
 
 export default function Footer() {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const { isOwner } = useIsOwner(walletAddress);
+
+  // Obtener wallet conectada
+  useEffect(() => {
+    const checkWallet = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          }) as string[];
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error('Error checking wallet:', error);
+        }
+      }
+    };
+
+    checkWallet();
+
+    if (window.ethereum?.on) {
+      window.ethereum.on('accountsChanged', (accounts: unknown) => {
+        const accountList = accounts as string[];
+        if (accountList.length > 0) {
+          setWalletAddress(accountList[0]);
+        } else {
+          setWalletAddress(null);
+        }
+      });
+    }
+  }, []);
+
   return (
     <Box
       component="footer"
@@ -126,6 +164,27 @@ export default function Footer() {
                 <ListAlt sx={{ fontSize: 18 }} />
                 <Typography variant="body2">Donaciones</Typography>
               </MuiLink>
+
+              {/* Admin link - solo visible para owner */}
+              {isOwner && (
+                <MuiLink
+                  component={Link}
+                  to="/admin"
+                  underline="hover"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    color: 'warning.main',
+                    '&:hover': {
+                      color: 'warning.dark',
+                    },
+                  }}
+                >
+                  <AdminPanelSettingsIcon sx={{ fontSize: 18 }} />
+                  <Typography variant="body2">Admin</Typography>
+                </MuiLink>
+              )}
             </Stack>
           </Grid>
 

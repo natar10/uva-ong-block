@@ -29,15 +29,6 @@ contract ONGDonaciones {
         uint256 votos;
     }
 
-    // Estructura 
-    struct Proveedor {
-        string id;
-        string descripcion;
-        address proveedor;
-        uint256 precioUnidad;
-        string tipoMaterial;
-    }
-
     // Estructura Donación
     struct Donacion {
         string id;
@@ -47,30 +38,16 @@ contract ONGDonaciones {
         uint256 fecha;
     }
 
-    // Estructura Compra
-    struct Compra {
-        string id;
-        address comprador;
-        address proveedor;
-        string proyectoId;
-        uint256 valor;
-        uint256 fecha;
-        bool validada;
-    }
-
     
     // Mapeos
     mapping(address => Donante) public donantes;
     mapping(string => Proyecto) public proyectos;
     mapping(string => Donacion) public donaciones;
-    mapping(string => Compra) public compras;
-
 
     // Arrays para iterar (listar todos los registros)
     address[] public listaDonantes;
     string[] public listaProyectos;
     string[] public listaDonaciones;
-    string[] public listaCompras;
     
     // Contador para IDs autoincrementales
     uint256 private contadorDonaciones = 0;
@@ -86,7 +63,6 @@ contract ONGDonaciones {
     event ProyectoCreado(string id, string descripcion);
     event DonanteRegistrado(address indexed direccion, string nombre);
     event VotacionRealizada(address indexed donante, string proyectoId, uint256 cantidad_votos);
-    event CompraRealizada(address indexed donante, string compradorId, uint256 valor_compra);
     
     // ============================================
     // CONSTRUCTOR (se ejecuta al desplegar)
@@ -208,56 +184,6 @@ contract ONGDonaciones {
 
         emit VotacionRealizada(msg.sender, _proyectoId, _cantidadVotos);
     }
-
-
-    function realizarCompra(
-        string calldata _compraId,
-        string calldata _proyectoId,
-        address _proveedor
-    ) payable public {
-        require(proyectos[_proyectoId].responsable == msg.sender, "No autorizado");
-        require(compras[_compraId].fecha == 0, "Compra ya existe");
-
-        uint256 valorCompra = msg.value;
-        require(valorCompra > 0, "Valor invalido");
-
-        compras[_compraId] = Compra({
-            id: _compraId,
-            comprador: msg.sender,
-            proveedor: _proveedor,
-            proyectoId: _proyectoId,
-            valor: valorCompra,
-            fecha: block.timestamp,
-            validada: false
-        });
-
-        proyectos[_proyectoId].cantidadRecaudada -= valorCompra;
-
-        listaCompras.push(_compraId);
-
-        emit CompraRealizada(msg.sender, _compraId, valorCompra);
-    }
-
-    function validarCompra(string calldata _compraId) external {
-        Compra storage compra = compras[_compraId];
-
-        require(compra.fecha != 0, "Compra no existe");
-        require(!compra.validada, "Compra ya validada");
-        require(compra.proveedor == msg.sender, "Solo proveedor");
-
-        compra.validada = true;
-
-        proyectos[compra.proyectoId].cantidadValidada += compra.valor;
-
-        payable(compra.proveedor).transfer(compra.valor);
-    }
-
-
-    event CompraValidada(
-        string compraId,
-        address proveedor,
-        uint256 valor
-    );
 
 
     /**

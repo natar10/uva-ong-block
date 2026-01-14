@@ -23,8 +23,8 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import { useProyectos, EstadoProyecto, type Proyecto } from '../../hooks/useProyectos';
 import { useDonante } from '../../hooks/useDonante';
-import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useContract } from '@/hooks/useContract';
 
@@ -92,7 +92,8 @@ export const realizarVotacion = async (
 function ProyectosPage() {
   const [open, setOpen] = useState(false);
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState<Proyecto | null>(null);
-
+  const [walletAddress, setWalletAddress] = useState('');
+  const [checkingWallet, setCheckingWallet] = useState(true);
   const handleOpen = (proyecto:Proyecto) => {
     setProyectoSeleccionado(proyecto);
     setOpen(true);
@@ -107,9 +108,37 @@ function ProyectosPage() {
   const { proyectos, stats, loading, error } = useProyectos();
   const [walletConnected, setWalletConnected] = useState(false);
   const [tokens, setTokens] = useState(1);
-  const { donante, isRegistered, loading: loadingDonante } = useDonante(
+  const { donante } = useDonante(
       walletConnected ? walletAddress : null
     );
+
+  // Efecto para verificar si ya hay una wallet conectada al cargar
+  useEffect(() => {
+    const checkWallet = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          // Verificar si ya hay cuentas conectadas
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          }) as string[];
+
+          if (accounts.length > 0) {
+            console.log('Wallet ya conectada:', accounts[0]);
+            setWalletAddress(accounts[0]);
+            setWalletConnected(true);
+          }
+          setCheckingWallet(false);
+        } catch (error) {
+          console.error('Error verificando wallet:', error);
+          setCheckingWallet(false);
+        }
+      } else {
+        setCheckingWallet(false);
+      }
+    };
+
+    checkWallet();
+  }, []);
 
   const getEstadoChip = (estado: EstadoProyecto) => {
     switch (estado) {
@@ -158,6 +187,17 @@ function ProyectosPage() {
   const formatearDireccion = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(38)}`;
   };
+
+  if(checkingWallet){
+    return (
+      <Box sx={{ textAlign: 'center' }}>
+      <CircularProgress />
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+        Verificando wallet...
+      </Typography>
+    </Box>
+    )
+  }
 
   return (
     <AppTheme>
@@ -384,16 +424,14 @@ function ProyectosPage() {
                                   <strong>Votos recibidos:</strong> {proyecto.votos}
                                 </Typography>
 
-                                <button 
+                                <Button 
                                   variant="contained"
                                   sx={{ ml: 'auto' }}
                                   onClick={() =>handleOpen(proyecto)}
                                   style={{ marginLeft: 'auto' }}
                                 >
-                                  <Typography variant="body2">
-                                    Votar Proyecto
-                                  </Typography>
-                                </button>
+                                  Votar Proyecto
+                                </Button>
                                 
                               </Stack>
 
@@ -556,17 +594,22 @@ function ProyectosPage() {
             Tokens disponibles: {calcularTokensGobernanza()}
           </Typography>
 
-          <Typography>
-            Tokens a utilizar: 
-            <input
-              type="number"
-              min={0}
-              max={calcularTokensGobernanza()}
-              value={tokens}
-              onChange={(e) => setTokens(Number(e.target.value))}
-              style={{ textAlign: "right" }}
-            />
-          </Typography>
+          <TextField
+            label="Tokens a utilizar"
+            type="number"
+            value={tokens}
+            onChange={(e) => setTokens(Math.floor(Number(e.target.value)))}
+            fullWidth
+            variant="filled"
+            sx={{ mt: 2 }}
+            slotProps={{
+              htmlInput: {
+                min: 0,
+                max: calcularTokensGobernanza(),
+                step: 1,
+              },
+            }}
+          />
           
         </DialogContent>
 
@@ -575,22 +618,24 @@ function ProyectosPage() {
             Cancelar
           </Button>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              // TODO: lógica para votar
-              realizarVotacion( getContract,{
-                proyectoId: proyectoSeleccionado?.id,
-                votos: tokens
-              }).then((result)=>{
-                console.log(result);
-              })
-              handleClose();
-            }}
-          >
-            Confirmar
-          </Button>
+          {proyectoSeleccionado?.id &&
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                // TODO: lógica para votar
+                realizarVotacion( getContract,{
+                  proyectoId: proyectoSeleccionado.id,
+                  votos: tokens
+                }).then((result)=>{
+                  console.log(result);
+                })
+                handleClose();
+              }}
+            >
+              Confirmar
+            </Button>
+          }
         </DialogActions>
       </Dialog>
 
