@@ -1,0 +1,824 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "donante",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "compradorId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "valor_compra",
+						"type": "uint256"
+					}
+				],
+				"name": "CompraRealizada",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "compraId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					}
+				],
+				"name": "CompraValidada",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "donante",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "cantidad",
+						"type": "uint256"
+					}
+				],
+				"name": "DonacionRealizada",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "direccion",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "nombre",
+						"type": "string"
+					}
+				],
+				"name": "DonanteRegistrado",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "descripcion",
+						"type": "string"
+					}
+				],
+				"name": "ProyectoCreado",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "donante",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "cantidad_votos",
+						"type": "uint256"
+					}
+				],
+				"name": "VotacionRealizada",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "enum ONGDonaciones.EstadoProyecto",
+						"name": "_nuevoEstado",
+						"type": "uint8"
+					}
+				],
+				"name": "cambiarEstadoProyecto",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "compras",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "comprador",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fecha",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "validada",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_id",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_descripcion",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "_responsable",
+						"type": "address"
+					}
+				],
+				"name": "crearProyecto",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "donaciones",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "donante",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cantidad",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fecha",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "donantes",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "direccion",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "nombre",
+						"type": "string"
+					},
+					{
+						"internalType": "enum ONGDonaciones.TipoDonante",
+						"name": "tipoDonante",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalDonado",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokensGobernanza",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					}
+				],
+				"name": "donar",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "listaCompras",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "listaDonaciones",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "listaDonantes",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "listaProyectos",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "obtenerBalance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_id",
+						"type": "string"
+					}
+				],
+				"name": "obtenerDonacion",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "donante",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "proyectoId",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidad",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "fecha",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ONGDonaciones.Donacion",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_direccion",
+						"type": "address"
+					}
+				],
+				"name": "obtenerDonante",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "direccion",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "nombre",
+								"type": "string"
+							},
+							{
+								"internalType": "enum ONGDonaciones.TipoDonante",
+								"name": "tipoDonante",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalDonado",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokensGobernanza",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ONGDonaciones.Donante",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_id",
+						"type": "string"
+					}
+				],
+				"name": "obtenerProyecto",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "descripcion",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "responsable",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidadRecaudada",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidadValidada",
+								"type": "uint256"
+							},
+							{
+								"internalType": "enum ONGDonaciones.EstadoProyecto",
+								"name": "estado",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votos",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ONGDonaciones.Proyecto",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "obtenerTotalDonaciones",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "obtenerTotalDonantes",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "obtenerTotalProyectos",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "proyectos",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "descripcion",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "responsable",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cantidadRecaudada",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cantidadValidada",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum ONGDonaciones.EstadoProyecto",
+						"name": "estado",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votos",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_compraId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "_proveedor",
+						"type": "address"
+					}
+				],
+				"name": "realizarCompra",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_nombre",
+						"type": "string"
+					},
+					{
+						"internalType": "enum ONGDonaciones.TipoDonante",
+						"name": "_tipo",
+						"type": "uint8"
+					}
+				],
+				"name": "registrarDonante",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "retirarFondos",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_compraId",
+						"type": "string"
+					}
+				],
+				"name": "validarCompra",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_cantidad",
+						"type": "uint256"
+					}
+				],
+				"name": "validarFondosProyecto",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_cantidadVotos",
+						"type": "uint256"
+					}
+				],
+				"name": "votarProyecto",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"cambiarEstadoProyecto(string,uint8)": {
+					"notice": "Cambiar estado de un proyecto"
+				},
+				"crearProyecto(string,string,address)": {
+					"notice": "Crear un nuevo proyecto (solo owner)"
+				},
+				"donar(string)": {
+					"notice": "Realizar una donación (con ETH real)"
+				},
+				"registrarDonante(string,uint8)": {
+					"notice": "Registrar un nuevo donante"
+				},
+				"validarFondosProyecto(string,uint256)": {
+					"notice": "Validar fondos de un proyecto (owner marca como validado)"
+				},
+				"votarProyecto(string,uint256)": {
+					"notice": "Realizar votación"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"backend/contracts/ONGDonaciones.sol": "ONGDonaciones"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"backend/contracts/ONGDonaciones.sol": {
+			"keccak256": "0x70cc4cfc52fe6e32c40e69dc6bef2afa16201e73fc91118c00f53bfe61c1414d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d8c403d59f17962bef12a456623caa9c2bd30265011c4753b2861c7bd95989f0",
+				"dweb:/ipfs/QmZBwgoUcM2t7PE2PwtinJvqTYGZd8csD31VpTJLeg7kFv"
+			]
+		}
+	},
+	"version": 1
+}
