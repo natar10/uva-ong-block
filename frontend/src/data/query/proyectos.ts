@@ -73,8 +73,8 @@ export const fetchProyectos = async (
 
   const stats: ProyectosStats = {
     totalProyectos: totalNumber,
-    totalRecaudado: parseFloat(ethers.formatEther(recaudadoTotal)).toFixed(2),
-    totalValidado: parseFloat(ethers.formatEther(validadoTotal)).toFixed(2),
+    totalRecaudado: parseFloat(ethers.formatEther(recaudadoTotal)).toFixed(3),
+    totalValidado: parseFloat(ethers.formatEther(validadoTotal)).toFixed(3),
   };
 
   console.log(`✓ ${totalNumber} proyectos cargados exitosamente`);

@@ -18,21 +18,65 @@ import HomeIcon from '@mui/icons-material/Home';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import FolderIcon from '@mui/icons-material/Folder';
 import ListAlt from '@mui/icons-material/ListAlt';
-import PeopleIcon from '@mui/icons-material/People'; // ícono voluntarios
+import PeopleIcon from '@mui/icons-material/People';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useIsOwner } from '../../hooks/useIsOwner';
 
 const menuItems = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
   { label: 'Donar', path: '/donar', icon: <VolunteerActivismIcon /> },
   { label: 'Proyectos', path: '/proyectos', icon: <FolderIcon /> },
   { label: 'Donaciones', path: '/donaciones', icon: <ListAlt /> },
-  { label: 'Voluntarios', path: '/voluntarios', icon: <PeopleIcon /> }, // voluntarios
+  { label: 'Voluntarios', path: '/voluntarios', icon: <PeopleIcon /> },
 ];
+
+const adminMenuItem = {
+  label: 'Admin',
+  path: '/admin',
+  icon: <AdminPanelSettingsIcon />,
+};
 
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
+  const { isOwner } = useIsOwner(walletAddress);
+
+  // Obtener wallet conectada
+  useEffect(() => {
+    const checkWallet = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          }) as string[];
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error('Error checking wallet:', error);
+        }
+      }
+    };
+
+    checkWallet();
+
+    // Escuchar cambios de cuenta
+    if (window.ethereum?.on) {
+      const handleAccountsChanged = (accounts: unknown) => {
+        const accountList = accounts as string[];
+        if (accountList.length > 0) {
+          setWalletAddress(accountList[0]);
+        } else {
+          setWalletAddress(null);
+        }
+      };
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+    }
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -44,6 +88,9 @@ export default function Header() {
   const handleDrawerToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  // Agregar item de admin si es owner
+  const allMenuItems = isOwner ? [...menuItems, adminMenuItem] : menuItems;
 
   return (
     <>
@@ -92,18 +139,22 @@ export default function Header() {
               spacing={1}
               sx={{ display: { xs: 'none', md: 'flex' } }}
             >
-              {menuItems.map((item) => (
+              {allMenuItems.map((item) => (
                 <Button
                   key={item.path}
                   component={Link}
                   to={item.path}
                   startIcon={item.icon}
                   sx={{
-                    color: isActive(item.path) ? 'primary.main' : 'text.primary',
+                    color: isActive(item.path)
+                      ? item.path === '/admin'
+                        ? 'warning.main'
+                        : 'primary.main'
+                      : 'text.primary',
                     fontWeight: isActive(item.path) ? 600 : 400,
                     px: 2,
                     borderBottom: isActive(item.path) ? 2 : 0,
-                    borderColor: 'primary.main',
+                    borderColor: item.path === '/admin' ? 'warning.main' : 'primary.main',
                     borderRadius: 0,
                     '&:hover': {
                       bgcolor: (theme) =>
@@ -153,7 +204,7 @@ export default function Header() {
           </Box>
 
           <List>
-            {menuItems.map((item) => (
+            {allMenuItems.map((item) => (
               <ListItem key={item.path} disablePadding>
                 <ListItemButton
                   component={Link}
@@ -177,7 +228,13 @@ export default function Header() {
                     },
                   }}
                 >
-                  <Box sx={{ mr: 2, display: 'flex', color: 'primary.main' }}>
+                  <Box
+                    sx={{
+                      mr: 2,
+                      display: 'flex',
+                      color: item.path === '/admin' ? 'warning.main' : 'primary.main',
+                    }}
+                  >
                     {item.icon}
                   </Box>
                   <ListItemText
