@@ -4,6 +4,16 @@ pragma solidity ^0.8.0;
 import "./TokenGobernanza.sol";
 
 contract ONGDonaciones {
+    /// MATERIALES ---------------------
+    struct Material {
+        string nombre;
+        uint256 valor;
+    }
+
+    Material[] public materiales;
+
+    // ------------------------------------------
+
     // Enum para tipo de donante
     enum TipoDonante {
         Individual,
@@ -41,6 +51,14 @@ contract ONGDonaciones {
     // NOTA: Valor bajo (2) para propósitos demostrativos.
     uint256 public constant VOTOS_MINIMOS = 2;
 
+    // Estructura Proveedor
+    struct Proveedor {
+        string id;
+        string descripcion;
+        address proveedor;
+        uint256 ganancias;
+    }
+
     // Estructura Donación
     struct Donacion {
         string id;
@@ -50,10 +68,24 @@ contract ONGDonaciones {
         uint256 fecha;
     }
 
+    // Estructura Compra
+    struct Compra {
+        string id;
+        address comprador;
+        address proveedor;
+        string proyectoId;
+        uint256 cantidad;
+        string tipo;
+        uint256 fecha;
+        bool validada;
+    }
+
     // Mapeos
     mapping(address => Donante) public donantes;
     mapping(string => Proyecto) public proyectos;
     mapping(string => Donacion) public donaciones;
+    mapping(string => Compra) public compras;
+    mapping(address => Proveedor) public proveedores;
     // Mapping para verificar si un donante ha donado a un proyecto específico
     mapping(string => mapping(address => bool)) public donantesDeProyecto;
 
@@ -61,6 +93,7 @@ contract ONGDonaciones {
     address[] public listaDonantes;
     string[] public listaProyectos;
     string[] public listaDonaciones;
+    string[] public listaCompras;
 
     // Contador para IDs autoincrementales
     uint256 private contadorDonaciones = 0;
@@ -103,6 +136,12 @@ contract ONGDonaciones {
         uint256 cantidadVotos
     );
 
+    event CompraRealizada(
+        address indexed comprador,
+        string compraId,
+        uint256 valor
+    );
+
     // ============================================
     // CONSTRUCTOR (se ejecuta al desplegar)
     // ============================================
@@ -110,6 +149,12 @@ contract ONGDonaciones {
     constructor(address _tokenGobernanza) {
         owner = msg.sender; // quien despliega el contrato es el owner
         tokenGobernanza = TokenGobernanza(_tokenGobernanza);
+
+        // Declaracion materiales
+        materiales.push(Material("Libro", 10 wei));
+        materiales.push(Material("Cuaderno", 8 wei));
+        materiales.push(Material("PelotaFutbol", 5 wei)); // 1.5
+        materiales.push(Material("Madera", 15 wei)); // 0.8
     }
 
     /**
@@ -155,6 +200,23 @@ contract ONGDonaciones {
         emit DonanteRegistrado(msg.sender, _nombre);
     }
 
+    /** Obtiene el objeto Matrial dado un numbre
+     */
+    function getMaterialByName(
+        string calldata _nombre
+    ) public view returns (Material memory) {
+        for (uint256 i = 0; i < materiales.length; i++) {
+            if (
+                keccak256(bytes(materiales[i].nombre)) ==
+                keccak256(bytes(_nombre))
+            ) {
+                return materiales[i];
+            }
+        }
+
+        revert("Material no existe");
+    }
+
     /**
      * Crear un nuevo proyecto (solo owner)
      */
@@ -188,7 +250,10 @@ contract ONGDonaciones {
     /**
      * Realizar una donación (con ETH real)
      */
-    function donar(string memory _proyectoId) public payable {
+    function donar(
+        string memory _proyectoId,
+        string calldata tipo_material
+    ) public payable {
         require(msg.value > 0, "La donacion debe ser mayor a 0");
         require(
             bytes(proyectos[_proyectoId].id).length > 0,
@@ -367,6 +432,56 @@ contract ONGDonaciones {
         address _donante
     ) public view returns (uint256) {
         return tokenGobernanza.balanceOf(_donante);
+    }
+
+    function registrarProveedor(
+        address _proveedor,
+        string calldata nombre,
+        string calldata _descripcion
+    ) public soloOwner {
+        proveedores[_proveedor] = Proveedor({
+            proveedor: _proveedor,
+            descripcion: _descripcion,
+            ganancias: 0,
+            id: nombre
+        });
+    }
+
+    function realizarCompra(
+        string calldata _compraId,
+        string calldata _proyectoId,
+        address _proveedor,
+        string calldata tipo_material,
+        uint128 _cantidad
+    ) external {
+        Proyecto storage proyecto = proyectos[_proyectoId];
+
+        require(bytes(proyecto.id).length > 0, "Proyecto no existe");
+        require(proyecto.responsable == msg.sender, "No autorizado");
+        require(_cantidad > 0, "La cantidad tiene que ser mayor que 0");
+        require(compras[_compraId].fecha == 0, "Compra ya existe");
+
+        Material memory material = getMaterialByName(tipo_material);
+
+        uint256 valor = _cantidad * material.valor;
+        require(proyecto.cantidadRecaudada >= valor, "Fondos insuficientes");
+
+        compras[_compraId] = Compra({
+            id: _compraId,
+            comprador: msg.sender,
+            proveedor: _proveedor,
+            proyectoId: _proyectoId,
+            cantidad: _cantidad,
+            tipo: tipo_material,
+            fecha: block.timestamp,
+            validada: false
+        });
+
+        proyecto.cantidadRecaudada -= valor;
+
+        listaCompras.push(_compraId);
+
+        emit CompraRealizada(msg.sender, _compraId, valor);
     }
 
     /**
