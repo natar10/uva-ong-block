@@ -1,8 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
+
+
+
+
 contract ONGDonaciones {
     
+
+    /// MATERIALES ---------------------
+    struct Material {
+        string nombre;
+        uint256 valor;
+    }
+
+    Material[] public materiales;
+
+    // ------------------------------------------
+
     // Enum para tipo de donante
     enum TipoDonante { Individual, Empresa }
     
@@ -34,8 +50,7 @@ contract ONGDonaciones {
         string id;
         string descripcion;
         address proveedor;
-        uint256 precioUnidad;
-        string tipoMaterial;
+        uint256 ganancias;
     }
 
     // Estructura Donación
@@ -53,7 +68,8 @@ contract ONGDonaciones {
         address comprador;
         address proveedor;
         string proyectoId;
-        uint256 valor;
+        uint256 cantidad;
+        string tipo;
         uint256 fecha;
         bool validada;
     }
@@ -64,6 +80,7 @@ contract ONGDonaciones {
     mapping(string => Proyecto) public proyectos;
     mapping(string => Donacion) public donaciones;
     mapping(string => Compra) public compras;
+    mapping(address => Proveedor) public proveedores;
 
 
     // Arrays para iterar (listar todos los registros)
@@ -77,6 +94,12 @@ contract ONGDonaciones {
     
     // Dueño del contrato (admin de la ONG)
     address public owner;
+
+    modifier soloOwner() {
+        require(msg.sender == owner, "Solo el owner puede ejecutar esto");
+        _;
+    }
+
     
     // ============================================
     // EVENTOS (para que el frontend sepa qué pasó)
@@ -92,18 +115,23 @@ contract ONGDonaciones {
     // CONSTRUCTOR (se ejecuta al desplegar)
     // ============================================
     
-    constructor() {
-        owner = msg.sender; // quien despliega el contrato es el owner
-    }
+   
     
     // ============================================
     // MODIFICADORES (como middleware)
     // ============================================
     
-    modifier soloOwner() {
-        require(msg.sender == owner, "Solo el owner puede ejecutar esto");
-        _;
+    
+    constructor() {
+        owner = msg.sender;
+
+        // Declaracion materiales
+        materiales.push(Material("Libro", 10 wei));
+        materiales.push(Material("Cuaderno", 8 wei));
+        materiales.push(Material("PelotaFutbol", 5 wei)); // 1.5
+        materiales.push(Material("Madera", 15 wei)); // 0.8
     }
+
     
     // ============================================
     // FUNCIONES PRINCIPALES
@@ -126,6 +154,26 @@ contract ONGDonaciones {
         listaDonantes.push(msg.sender);
         emit DonanteRegistrado(msg.sender, _nombre);
     }
+
+    /** Obtiene el objeto Matrial dado un numbre
+     */
+    function getMaterialByName(string calldata _nombre)
+        public
+        view
+        returns (Material memory)
+    {
+        for (uint256 i = 0; i < materiales.length; i++) {
+            if (
+                keccak256(bytes(materiales[i].nombre)) ==
+                keccak256(bytes(_nombre))
+            ) {
+                return materiales[i];
+            }
+        }
+
+        revert("Material no existe");
+    }
+
     
     /**
      * Crear un nuevo proyecto (solo owner)
@@ -134,7 +182,7 @@ contract ONGDonaciones {
         string memory _id, 
         string memory _descripcion,
         address _responsable
-    ) public soloOwner {
+    ) public soloOwner{
         require(bytes(proyectos[_id].id).length == 0, "Proyecto ya existe");
         
         proyectos[_id] = Proyecto({
@@ -154,7 +202,7 @@ contract ONGDonaciones {
     /**
      * Realizar una donación (con ETH real)
      */
-    function donar(string memory _proyectoId) public payable {
+    function donar(string memory _proyectoId, string calldata tipo_material) public payable {
         require(msg.value > 0, "La donacion debe ser mayor a 0");
         require(bytes(proyectos[_proyectoId].id).length > 0, "Proyecto no existe");
         require(proyectos[_proyectoId].estado == EstadoProyecto.Activo, "Proyecto no activo");
@@ -209,55 +257,63 @@ contract ONGDonaciones {
         emit VotacionRealizada(msg.sender, _proyectoId, _cantidadVotos);
     }
 
+    function registrarProveedor(
+    address _proveedor,
+    string calldata nombre,
+    string calldata _descripcion
+    ) public soloOwner {
+
+        proveedores[_proveedor] = Proveedor({
+            proveedor: _proveedor,
+            descripcion: _descripcion,
+            ganancias: 0,
+            id: nombre
+        });
+    }
+
+
 
     function realizarCompra(
         string calldata _compraId,
         string calldata _proyectoId,
-        address _proveedor
-    ) payable public {
-        require(proyectos[_proyectoId].responsable == msg.sender, "No autorizado");
+        address _proveedor,
+        string calldata tipo_material,
+        uint128 _cantidad
+    ) external {
+        Proyecto storage proyecto = proyectos[_proyectoId];
+
+        require(bytes(proyecto.id).length > 0, "Proyecto no existe");
+        require(proyecto.responsable == msg.sender, "No autorizado");
+        require(_cantidad> 0, "La cantidad tiene que ser mayor que 0");
         require(compras[_compraId].fecha == 0, "Compra ya existe");
 
-        uint256 valorCompra = msg.value;
-        require(valorCompra > 0, "Valor invalido");
+        Material memory material = getMaterialByName(tipo_material);
+
+        uint256 valor = _cantidad * material.valor;
+        require(
+            proyecto.cantidadRecaudada >= valor,
+            "Fondos insuficientes"
+        );
 
         compras[_compraId] = Compra({
             id: _compraId,
             comprador: msg.sender,
             proveedor: _proveedor,
             proyectoId: _proyectoId,
-            valor: valorCompra,
+            cantidad: _cantidad,
+            tipo: tipo_material,
             fecha: block.timestamp,
             validada: false
         });
 
-        proyectos[_proyectoId].cantidadRecaudada -= valorCompra;
+        proyecto.cantidadRecaudada -= valor;
 
         listaCompras.push(_compraId);
 
-        emit CompraRealizada(msg.sender, _compraId, valorCompra);
-    }
-
-    function validarCompra(string calldata _compraId) external {
-        Compra storage compra = compras[_compraId];
-
-        require(compra.fecha != 0, "Compra no existe");
-        require(!compra.validada, "Compra ya validada");
-        require(compra.proveedor == msg.sender, "Solo proveedor");
-
-        compra.validada = true;
-
-        proyectos[compra.proyectoId].cantidadValidada += compra.valor;
-
-        payable(compra.proveedor).transfer(compra.valor);
+        emit CompraRealizada(msg.sender, _compraId, valor);
     }
 
 
-    event CompraValidada(
-        string compraId,
-        address proveedor,
-        uint256 valor
-    );
 
 
     /**

@@ -39,31 +39,6 @@
 				"anonymous": false,
 				"inputs": [
 					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "compraId",
-						"type": "string"
-					},
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "proveedor",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "valor",
-						"type": "uint256"
-					}
-				],
-				"name": "CompraValidada",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "donante",
@@ -198,8 +173,13 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "valor",
+						"name": "cantidad",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "tipo",
+						"type": "string"
 					},
 					{
 						"internalType": "uint256",
@@ -322,11 +302,47 @@
 						"internalType": "string",
 						"name": "_proyectoId",
 						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "tipo_material",
+						"type": "string"
 					}
 				],
 				"name": "donar",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_nombre",
+						"type": "string"
+					}
+				],
+				"name": "getMaterialByName",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "nombre",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "valor",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ONGDonaciones.Material",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -400,6 +416,30 @@
 						"internalType": "string",
 						"name": "",
 						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "materiales",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "nombre",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -621,6 +661,40 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "proveedores",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "descripcion",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "ganancias",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "string",
 						"name": "",
 						"type": "string"
@@ -683,11 +757,21 @@
 						"internalType": "address",
 						"name": "_proveedor",
 						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "tipo_material",
+						"type": "string"
+					},
+					{
+						"internalType": "uint128",
+						"name": "_cantidad",
+						"type": "uint128"
 					}
 				],
 				"name": "realizarCompra",
 				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -709,21 +793,31 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "retirarFondos",
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "nombre",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_descripcion",
+						"type": "string"
+					}
+				],
+				"name": "registrarProveedor",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "_compraId",
-						"type": "string"
-					}
-				],
-				"name": "validarCompra",
+				"inputs": [],
+				"name": "retirarFondos",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -779,8 +873,11 @@
 				"crearProyecto(string,string,address)": {
 					"notice": "Crear un nuevo proyecto (solo owner)"
 				},
-				"donar(string)": {
+				"donar(string,string)": {
 					"notice": "Realizar una donación (con ETH real)"
+				},
+				"getMaterialByName(string)": {
+					"notice": "Obtiene el objeto Matrial dado un numbre"
 				},
 				"registrarDonante(string,uint8)": {
 					"notice": "Registrar un nuevo donante"
@@ -799,7 +896,7 @@
 		"compilationTarget": {
 			"backend/contracts/ONGDonaciones.sol": "ONGDonaciones"
 		},
-		"evmVersion": "london",
+		"evmVersion": "osaka",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -812,11 +909,11 @@
 	},
 	"sources": {
 		"backend/contracts/ONGDonaciones.sol": {
-			"keccak256": "0x70cc4cfc52fe6e32c40e69dc6bef2afa16201e73fc91118c00f53bfe61c1414d",
+			"keccak256": "0xa07372fa89ae45eee363a73e7dc655d93dbeed5123233a283541311a95f09d93",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d8c403d59f17962bef12a456623caa9c2bd30265011c4753b2861c7bd95989f0",
-				"dweb:/ipfs/QmZBwgoUcM2t7PE2PwtinJvqTYGZd8csD31VpTJLeg7kFv"
+				"bzz-raw://949debc0c84e458f7c85a07519b50fc0629457c4e6c22627ceacdedd992ec052",
+				"dweb:/ipfs/QmRQuvp6fo8awAa3inFz95i9ue3q7k1WEmC8PnGfdA7yzA"
 			]
 		}
 	},
