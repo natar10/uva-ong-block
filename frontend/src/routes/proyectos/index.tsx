@@ -583,8 +583,6 @@ function ProyectosPage() {
         </Container>
       </Box>
 
-      // Modal de confirmación del voto (aparece co clickar el botón "Votar Proyecto")
-
       
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>¿Cuántos tokens quieres utilizar en el proyecto {proyectoSeleccionado?.id} (cada token cuenta como un voto)?</DialogTitle>

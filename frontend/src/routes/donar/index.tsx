@@ -236,7 +236,7 @@ function DonarPage() {
                     sx={{ justifyContent: 'space-between', alignItems: 'center' }}
                   >
                     <Typography gutterBottom variant="h5" component="div">
-                      Estas donando como: <u>{nombre}</u>
+                      Tu wallet actual es: <u>{nombre}</u>
                     </Typography>
                     <Chip label={`${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`} color="primary" />
                   </Stack>

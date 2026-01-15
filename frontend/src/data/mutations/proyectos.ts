@@ -1,9 +1,11 @@
 import { mutationOptions } from '@tanstack/react-query';
+import { EstadoProyecto } from '../query/proyectos';
 
 export interface CrearProyectoParams {
   id: string;
   descripcion: string;
   responsable: string; // Dirección del responsable
+  estado: EstadoProyecto; // Propuesto o Activo
 }
 
 export interface CrearProyectoResult {
@@ -27,7 +29,8 @@ export const crearProyecto = async (
     const tx = await contract.crearProyecto(
       params.id,
       params.descripcion,
-      params.responsable
+      params.responsable,
+      params.estado
     );
 
     console.log('Transacción enviada:', tx.hash);

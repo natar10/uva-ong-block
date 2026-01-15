@@ -3,24 +3,6 @@
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "_proyectoId",
-				"type": "string"
-			},
-			{
-				"internalType": "enum ONGDonaciones.EstadoProyecto",
-				"name": "_nuevoEstado",
-				"type": "uint8"
-			}
-		],
-		"name": "cambiarEstadoProyecto",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
 				"name": "_id",
 				"type": "string"
 			},
@@ -33,6 +15,11 @@
 				"internalType": "address",
 				"name": "_responsable",
 				"type": "address"
+			},
+			{
+				"internalType": "enum ONGDonaciones.EstadoProyecto",
+				"name": "_estado",
+				"type": "uint8"
 			}
 		],
 		"name": "crearProyecto",
@@ -41,7 +28,13 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_tokenGobernanza",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -113,6 +106,50 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "votosTotal",
+				"type": "uint256"
+			}
+		],
+		"name": "ProyectoAprobado",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "votosTotal",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "fondosAlFondoComun",
+				"type": "uint256"
+			}
+		],
+		"name": "ProyectoCancelado",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"indexed": false,
 				"internalType": "string",
 				"name": "descripcion",
 				"type": "string"
@@ -149,6 +186,38 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_tokenGobernanza",
+				"type": "address"
+			}
+		],
+		"name": "setTokenGobernanza",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "tokenAnterior",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "tokenNuevo",
+				"type": "address"
+			}
+		],
+		"name": "TokenGobernanzaActualizado",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "_proyectoId",
 				"type": "string"
@@ -163,6 +232,92 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_proyectoId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_cantidadVotos",
+				"type": "uint256"
+			}
+		],
+		"name": "votarAprobacion",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_proyectoId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_cantidadVotos",
+				"type": "uint256"
+			}
+		],
+		"name": "votarCancelacion",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "votante",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "proyectoId",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "cantidadVotos",
+				"type": "uint256"
+			}
+		],
+		"name": "VotoAprobacion",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "votante",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "proyectoId",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "cantidadVotos",
+				"type": "uint256"
+			}
+		],
+		"name": "VotoCancelacion",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -232,11 +387,30 @@
 				"internalType": "uint256",
 				"name": "totalDonado",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			},
 			{
-				"internalType": "uint256",
-				"name": "tokensGobernanza",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "donantesDeProyecto",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -389,11 +563,6 @@
 						"internalType": "uint256",
 						"name": "totalDonado",
 						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tokensGobernanza",
-						"type": "uint256"
 					}
 				],
 				"internalType": "struct ONGDonaciones.Donante",
@@ -448,13 +617,37 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "votos",
+						"name": "votosAprobacion",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votosCancelacion",
 						"type": "uint256"
 					}
 				],
 				"internalType": "struct ONGDonaciones.Proyecto",
 				"name": "",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_donante",
+				"type": "address"
+			}
+		],
+		"name": "obtenerTokensGobernanza",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -554,7 +747,38 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "votos",
+				"name": "votosAprobacion",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "votosCancelacion",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tokenGobernanza",
+		"outputs": [
+			{
+				"internalType": "contract TokenGobernanza",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "VOTOS_MINIMOS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
 				"type": "uint256"
 			}
 		],
