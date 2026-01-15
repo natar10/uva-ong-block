@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 import { queryOptions } from '@tanstack/react-query';
 
 export enum EstadoProyecto {
-  Activo = 0,
-  Completado = 1,
+  Propuesto = 0,
+  Activo = 1,
   Cancelado = 2,
 }
 
@@ -14,7 +14,8 @@ export interface Proyecto {
   cantidadRecaudada: string;
   cantidadValidada: string;
   estado: EstadoProyecto;
-  votos: string;
+  votosAprobacion: string;
+  votosCancelacion: string;
 }
 
 export interface ProyectosStats {
@@ -63,7 +64,8 @@ export const fetchProyectos = async (
       cantidadRecaudada: ethers.formatEther(proyectoData.cantidadRecaudada),
       cantidadValidada: ethers.formatEther(proyectoData.cantidadValidada),
       estado: Number(proyectoData.estado) as EstadoProyecto,
-      votos: proyectoData.votos.toString(),
+      votosAprobacion: proyectoData.votosAprobacion.toString(),
+      votosCancelacion: proyectoData.votosCancelacion.toString(),
     });
 
     // Acumular totales

@@ -15,7 +15,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import AddIcon from '@mui/icons-material/Add';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LockIcon from '@mui/icons-material/Lock';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
 import AppTheme from '../../shared-theme/AppTheme';
+import { EstadoProyecto } from '../../data/query/proyectos';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import { useIsOwner } from '../../hooks/useIsOwner';
@@ -34,6 +40,7 @@ function AdminPage() {
   const [proyectoId, setProyectoId] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [responsable, setResponsable] = useState('');
+  const [estado, setEstado] = useState<EstadoProyecto>(EstadoProyecto.Propuesto);
 
   // Verificar owner
   const { isOwner, loading: loadingOwner } = useIsOwner(walletAddress);
@@ -111,6 +118,7 @@ function AdminPage() {
       id: proyectoId,
       descripcion,
       responsable,
+      estado,
     });
   };
 
@@ -118,6 +126,7 @@ function AdminPage() {
     setProyectoId('');
     setDescripcion('');
     setResponsable('');
+    setEstado(EstadoProyecto.Propuesto);
     reset();
   };
 
@@ -312,6 +321,7 @@ function AdminPage() {
                       <TextField
                         label="ID del Proyecto"
                         placeholder="Ej: PROYECTO-001"
+                        variant='filled'
                         value={proyectoId}
                         onChange={(e) => setProyectoId(e.target.value)}
                         fullWidth
@@ -325,6 +335,7 @@ function AdminPage() {
                       <TextField
                         label="Direccion del Responsable"
                         placeholder="0x..."
+                        variant='filled'
                         value={responsable}
                         onChange={(e) => setResponsable(e.target.value)}
                         fullWidth
@@ -334,6 +345,28 @@ function AdminPage() {
                       />
                     </Grid>
 
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <FormControl fullWidth disabled={creandoProyecto}>
+                        <InputLabel id="estado-label">Estado Inicial</InputLabel>
+                        <Select
+                          labelId="estado-label"
+                          value={estado}
+                          label="Estado Inicial"
+                          onChange={(e) => setEstado(e.target.value as EstadoProyecto)}
+                        >
+                          <MenuItem value={EstadoProyecto.Propuesto}>
+                            Propuesto (requiere votacion)
+                          </MenuItem>
+                          <MenuItem value={EstadoProyecto.Activo}>
+                            Activo (recibe donaciones)
+                          </MenuItem>
+                        </Select>
+                        <FormHelperText>
+                          Propuesto requiere votos para activarse
+                        </FormHelperText>
+                      </FormControl>
+                    </Grid>
+
                     <Grid size={{ xs: 12 }}>
                       <TextField
                         label="Descripcion del Proyecto"
@@ -341,9 +374,8 @@ function AdminPage() {
                         value={descripcion}
                         onChange={(e) => setDescripcion(e.target.value)}
                         fullWidth
+                        variant='filled'
                         required
-                        multiline
-                        rows={4}
                         disabled={creandoProyecto}
                         helperText="Explica de que trata el proyecto"
                       />
@@ -385,8 +417,8 @@ function AdminPage() {
           <Card sx={{ mt: 4, bgcolor: 'info.light' }}>
             <CardContent>
               <Typography variant="body2">
-                <strong>Nota:</strong> Solo tu (el owner del contrato) puedes crear
-                proyectos. La transaccion sera firmada con tu wallet actual:
+                Solo el owner del contrato puedes crear
+                proyectos. La transaccion sera firmada con el wallet actual:
               </Typography>
               <Typography
                 variant="caption"

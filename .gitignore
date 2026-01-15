@@ -1,0 +1,27 @@
+# Remix IDE auto-generated folders
+.remix/
+artifacts/
+cache/
+**/artifacts/
+**/cache/
+**/.remix/
+.deps
+**/.deps/
+
+# Remix specific files
+remix-compiler.config
+remix.config
+
+# Build outputs
+build/
+**/build/
+
+# Node modules (if any)
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.local
+**/.env
+**/.env.local

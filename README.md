@@ -10,7 +10,6 @@ uva-ong-block/
 │   ├── contracts/     # Contratos inteligentes
 │   │   └── ONGDonaciones.sol
 │   ├── scripts/       # Scripts de despliegue
-│   └── tests/         # Tests de contratos
 │
 └── frontend/          # Aplicación React
     └── src/
