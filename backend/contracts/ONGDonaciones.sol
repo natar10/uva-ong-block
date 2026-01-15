@@ -84,6 +84,7 @@ contract ONGDonaciones {
     address[] public listaDonantes;
     string[] public listaProyectos;
     string[] public listaDonaciones;
+    string[] public listaCompras;
 
     // Contador para IDs autoincrementales
     uint256 private contadorDonaciones = 0;
@@ -111,6 +112,11 @@ contract ONGDonaciones {
         address indexed donante,
         string proyectoId,
         uint256 cantidad_votos
+    );
+    event CompraRealizada(
+        address indexed comprador,
+        string compraId,
+        uint256 valor
     );
 
     // ============================================
