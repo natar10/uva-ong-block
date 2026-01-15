@@ -38,6 +38,8 @@ import Divider from '@mui/material/Divider';
 import { InfoDonar } from '@/components/donar/InfoDonar';
 import { DonarHero } from '@/components/donar/DonarHero';
 import { ConnectWallet } from '@/components/donar/VerifyingDonor';
+import TokenIcon from '@mui/icons-material/Token';
+import { useTokensGobernanza } from '@/hooks/useTokensGobernanza';
 
 export const Route = createFileRoute('/donar/')({
   component: DonarPage,
@@ -70,6 +72,10 @@ function DonarPage() {
   } = useRealizarDonacion();
 
   const steps = ['Conectar Wallet', 'Registrarse', 'Seleccionar Proyecto', 'Donar'];
+
+  const { tokens } = useTokensGobernanza(
+    walletConnected ? walletAddress : null
+  );
 
   // Efecto para verificar si ya hay una wallet conectada al cargar
   useEffect(() => {
@@ -225,7 +231,7 @@ function DonarPage() {
                   Tu tipo de donante: <Chip label={tipoDonante === TipoDonante.Individual ? 'Individual' : 'Empresa'} color="default" />
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Votos disponibles: <Chip label="TODO" color="default" />
+                  Gobernanza Disponible: <Chip icon={<TokenIcon color="primary" />} label={tokens} color="default" /> TKN4Good
                 </Typography>
               </Box>
             </Card>

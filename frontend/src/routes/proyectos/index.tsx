@@ -31,6 +31,14 @@ import { ErrorWallet } from '@/components/proyectos/ErrorWallet';
 import { VerificandoWallet } from '@/components/proyectos/VerificandoWallet';
 import { IncentivoVotacion } from '@/components/proyectos/IncentivoVotacion';
 import { useTokensGobernanza } from '@/hooks/useTokensGobernanza';
+import {
+  VotacionDialog,
+  type TipoVotacion,
+} from '@/components/proyectos/VotacionDialog';
+import {
+  useVotarAprobacion,
+  useVotarCancelacion,
+} from '@/hooks/useVotarProyecto';
 
 export const Route = createFileRoute('/proyectos/')({
   component: ProyectosPage,
@@ -59,10 +67,15 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function ProyectosPage() {
-  const [tabValue, setTabValue] = useState(0);  
+  const [tabValue, setTabValue] = useState(0);
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [checkingWallet, setCheckingWallet] = useState(true);
+
+  // Estado para el dialog de votacion
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<Proyecto | null>(null);
+  const [tipoVotacion, setTipoVotacion] = useState<TipoVotacion>('aprobacion');
 
   const { proyectos, stats, loading, error } = useProyectos();
   const { donante, isRegistered, loading: loadingDonante } = useDonante(
@@ -71,6 +84,10 @@ function ProyectosPage() {
   const { tokens } = useTokensGobernanza(
     walletConnected ? walletAddress : null
   );
+
+  // Hooks de votacion
+  const votarAprobacion = useVotarAprobacion();
+  const votarCancelacion = useVotarCancelacion();
 
   // Efecto para verificar si ya hay una wallet conectada al cargar
   useEffect(() => {
@@ -122,14 +139,34 @@ function ProyectosPage() {
   };
 
   const handleVotarAprobacion = (proyecto: Proyecto) => {
-    // TODO: Implementar logica de votacion de aprobacion
-    console.log('Votar aprobacion:', proyecto.id);
+    setProyectoSeleccionado(proyecto);
+    setTipoVotacion('aprobacion');
+    votarAprobacion.reset();
+    setDialogOpen(true);
   };
 
   const handleVotarCancelacion = (proyecto: Proyecto) => {
-    // TODO: Implementar logica de votacion de cancelacion
-    console.log('Votar cancelacion:', proyecto.id);
+    setProyectoSeleccionado(proyecto);
+    setTipoVotacion('cancelacion');
+    votarCancelacion.reset();
+    setDialogOpen(true);
   };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setProyectoSeleccionado(null);
+  };
+
+  const handleConfirmarVotacion = (proyectoId: string, cantidadVotos: number) => {
+    if (tipoVotacion === 'aprobacion') {
+      votarAprobacion.votar({ proyectoId, cantidadVotos });
+    } else {
+      votarCancelacion.votar({ proyectoId, cantidadVotos });
+    }
+  };
+
+  // Obtener el estado actual de la votacion segun el tipo
+  const votacionActual = tipoVotacion === 'aprobacion' ? votarAprobacion : votarCancelacion;
 
   const renderProyectosList = (
     proyectosList: Proyecto[],
@@ -282,6 +319,21 @@ function ProyectosPage() {
         <InfoProyectos />
       
       </Box>
+
+      {/* Dialog de Votacion */}
+      <VotacionDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        proyecto={proyectoSeleccionado}
+        tipoVotacion={tipoVotacion}
+        tokensDisponibles={parseFloat(tokens)}
+        onConfirmar={handleConfirmarVotacion}
+        isLoading={votacionActual.isLoading}
+        isSuccess={votacionActual.isSuccess}
+        isError={votacionActual.isError}
+        error={votacionActual.error}
+        resultMessage={votacionActual.data?.message}
+      />
 
       <Footer />
     </AppTheme>
