@@ -544,7 +544,7 @@ function DonarPage() {
                       variant="contained"
                       size="large"
                       onClick={handleDonar}
-                      disabled={!montoDonacion || parseFloat(montoDonacion) <= 0 || isDonating}
+                      disabled={!montoDonacion || parseFloat(montoDonacion) < 0.001 || isDonating}
                       startIcon={isDonating ? <CircularProgress size={20} /> : <VolunteerActivismIcon />}
                       sx={{ flex: 1 }}
                     >

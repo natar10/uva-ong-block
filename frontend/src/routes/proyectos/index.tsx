@@ -29,6 +29,8 @@ import { StatsProyectos } from '@/components/proyectos/StatsProyectos';
 import { InfoProyectos } from '@/components/proyectos/InfoProyectos';
 import { ErrorWallet } from '@/components/proyectos/ErrorWallet';
 import { VerificandoWallet } from '@/components/proyectos/VerificandoWallet';
+import { IncentivoVotacion } from '@/components/proyectos/IncentivoVotacion';
+import { useTokensGobernanza } from '@/hooks/useTokensGobernanza';
 
 export const Route = createFileRoute('/proyectos/')({
   component: ProyectosPage,
@@ -64,6 +66,9 @@ function ProyectosPage() {
 
   const { proyectos, stats, loading, error } = useProyectos();
   const { donante, isRegistered, loading: loadingDonante } = useDonante(
+    walletConnected ? walletAddress : null
+  );
+  const { tokens } = useTokensGobernanza(
     walletConnected ? walletAddress : null
   );
 
@@ -270,9 +275,11 @@ function ProyectosPage() {
           )}
         </Container>
 
-        
-      {/* Informacion adicional */}
-      <InfoProyectos />
+        {/* Incentivo para votar */}
+        <IncentivoVotacion tokens={tokens} isRegistered={isRegistered} />
+
+        {/* Informacion adicional */}
+        <InfoProyectos />
       
       </Box>
 
