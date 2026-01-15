@@ -5,6 +5,8 @@ cache/
 **/artifacts/
 **/cache/
 **/.remix/
+.deps
+**/.deps/
 
 # Remix specific files
 remix-compiler.config
