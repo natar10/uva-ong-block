@@ -10,7 +10,6 @@ export interface Donante {
   nombre: string;
   tipoDonante: TipoDonante;
   totalDonado: string;
-  tokensGobernanza: string;
 }
 
 /**
@@ -40,7 +39,6 @@ export const fetchDonante = async (
       nombre: donanteData.nombre,
       tipoDonante: Number(donanteData.tipoDonante) as TipoDonante,
       totalDonado: donanteData.totalDonado.toString(),
-      tokensGobernanza: donanteData.tokensGobernanza.toString(),
     };
 
     console.log('✓ Donante encontrado:', donante);

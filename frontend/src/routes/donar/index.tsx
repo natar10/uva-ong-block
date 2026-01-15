@@ -28,7 +28,6 @@ import AppTheme from '../../shared-theme/AppTheme';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useRegistrarDonante, TipoDonante } from '../../hooks/useRegistrarDonante';
@@ -36,6 +35,9 @@ import { useProyectos, EstadoProyecto } from '../../hooks/useProyectos';
 import { useDonante } from '../../hooks/useDonante';
 import { useRealizarDonacion } from '../../hooks/useRealizarDonacion';
 import Divider from '@mui/material/Divider';
+import { InfoDonar } from '@/components/donar/InfoDonar';
+import { DonarHero } from '@/components/donar/DonarHero';
+import { ConnectWallet } from '@/components/donar/VerifyingDonor';
 
 export const Route = createFileRoute('/donar/')({
   component: DonarPage,
@@ -48,7 +50,6 @@ function DonarPage() {
   const [walletAddress, setWalletAddress] = useState('');
   const [nombre, setNombre] = useState('');
   const [tipoDonante, setTipoDonante] = useState<TipoDonante>(TipoDonante.Individual);
-  const [tokensGobernanza, setTokensGobernanza] = useState(0)
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState('');
   const [montoDonacion, setMontoDonacion] = useState('');
   const [checkingWallet, setCheckingWallet] = useState(true);
@@ -109,7 +110,6 @@ function DonarPage() {
         console.log('Donante ya registrado:', donante);
         // Llenar los datos del donante
         setNombre(donante.nombre);
-        setTokensGobernanza(parseInt(donante.tokensGobernanza) )
         setTipoDonante(donante.tipoDonante);
         // Avanzar directamente al paso de selección de proyecto
         setActiveStep(2);
@@ -206,49 +206,29 @@ function DonarPage() {
         {/* Hero Section */}
         <Container maxWidth="lg" sx={{ mb: 6 }}>
           <Stack spacing={3} alignItems="center" textAlign="center">
-            <Typography
-              variant="h2"
-              sx={{
-                fontWeight: 800,
-                background: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)'
-                    : 'linear-gradient(90deg, #90caf9 0%, #42a5f5 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Haz tu Donación
-            </Typography>
-            <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 700 }}>
-              Contribuye a proyectos que cambian vidas. Cada donación es
-              registrada de forma transparente en blockchain.
-            </Typography>
+            <DonarHero />
 
-
-
-              <Card variant="highlighted">
-                <Box sx={{ p: 2 }}>
-                  <Stack
-                    direction="row"
-                    gap={4}
-                    sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-                  >
-                    <Typography gutterBottom variant="h5" component="div">
-                      Tu wallet actual es: <u>{nombre}</u>
-                    </Typography>
-                    <Chip label={`${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`} color="primary" />
-                  </Stack>
-                  <Divider sx={{ my: 1 }} />
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Tu tipo de donante: <Chip label={tipoDonante === TipoDonante.Individual ? 'Individual' : 'Empresa'} color="default" />
+            <Card variant="highlighted">
+              <Box sx={{ p: 2 }}>
+                <Stack
+                  direction="row"
+                  gap={4}
+                  sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <Typography gutterBottom variant="h5" component="div">
+                    Tu wallet actual es: <u>{nombre}</u>
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Votos disponibles: <Chip label={tokensGobernanza} color="default" />
-                  </Typography>
-                </Box>
-              </Card>
+                  <Chip label={`${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`} color="primary" />
+                </Stack>
+                <Divider sx={{ my: 1 }} />
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Tu tipo de donante: <Chip label={tipoDonante === TipoDonante.Individual ? 'Individual' : 'Empresa'} color="default" />
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Votos disponibles: <Chip label="TODO" color="default" />
+                </Typography>
+              </Box>
+            </Card>
 
           </Stack>
         </Container>
@@ -268,57 +248,13 @@ function DonarPage() {
 
           {/* Paso 1: Conectar Wallet */}
           {activeStep === 0 && (
-            <Card sx={{ maxWidth: 600, mx: 'auto' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Stack spacing={3} alignItems="center">
-                  <AccountBalanceWalletIcon
-                    sx={{ fontSize: 80, color: 'primary.main' }}
-                  />
-                  <Typography variant="h4" textAlign="center">
-                    Conecta tu Wallet
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" textAlign="center">
-                    Necesitas conectar tu billetera de Ethereum para poder donar.
-                    Recomendamos usar MetaMask.
-                  </Typography>
-
-                  {checkingWallet ? (
-                    <Box sx={{ textAlign: 'center' }}>
-                      <CircularProgress />
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                        Verificando wallet...
-                      </Typography>
-                    </Box>
-                  ) : !walletConnected ? (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      onClick={handleConnectWallet}
-                      startIcon={<AccountBalanceWalletIcon />}
-                      sx={{ px: 4, py: 1.5 }}
-                    >
-                      Conectar Wallet
-                    </Button>
-                  ) : loadingDonante ? (
-                    <Box sx={{ textAlign: 'center' }}>
-                      <CircularProgress />
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                        Verificando registro de donante...
-                      </Typography>
-                      <Alert severity="info" sx={{ mt: 2 }}>
-                        Wallet conectada: {walletAddress.substring(0, 6)}...
-                        {walletAddress.substring(38)}
-                      </Alert>
-                    </Box>
-                  ) : (
-                    <Alert severity="success" icon={<CheckCircleIcon />}>
-                      Wallet conectada: {walletAddress.substring(0, 6)}...
-                      {walletAddress.substring(38)}
-                    </Alert>
-                  )}
-                </Stack>
-              </CardContent>
-            </Card>
+            <ConnectWallet 
+              handleConnectWallet={handleConnectWallet} 
+              walletAddress={walletAddress} 
+              checkingWallet={checkingWallet} 
+              walletConnected={walletConnected} 
+              loadingDonante={loadingDonante} 
+            />
           )}
 
           {/* Paso 2: Registrarse */}
@@ -622,49 +558,7 @@ function DonarPage() {
         </Container>
 
         {/* Información adicional */}
-        <Container maxWidth="lg" sx={{ mt: 8 }}>
-          <Card
-            sx={{
-              bgcolor: (theme) =>
-                theme.palette.mode === 'light' ? 'grey.50' : 'grey.900',
-            }}
-          >
-            <CardContent sx={{ p: 4 }}>
-              <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-                ¿Por qué donar con blockchain?
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                    🔒 Seguridad Total
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Tus transacciones están protegidas por la tecnología blockchain,
-                    garantizando máxima seguridad.
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                    👁️ Transparencia Absoluta
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Todas las donaciones son públicas y verificables. Puedes rastrear
-                    exactamente cómo se usa tu dinero.
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                    🗳️ Poder de Decisión
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Recibe tokens de gobernanza y participa en las decisiones sobre
-                    qué proyectos apoyar.
-                  </Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Container>
+        <InfoDonar />
       </Box>
       <Footer />
     </AppTheme>
