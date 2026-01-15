@@ -7,12 +7,12 @@ export interface ContractConfig {
   networkName: string;
 }
 
-// Configuración del contrato
+// Configuración del contrato usando variables de entorno
 export const CONTRACT_CONFIG: ContractConfig = {
-  address: '0x7D02D00c452efd124563df0f90848A813421A8a3',
+  address: import.meta.env.VITE_CONTRACT_ADDRESS,
   abi: ONGDonacionesABI,
-  chainId: 1337, // Chain ID de tu red Besu
-  networkName: 'Besu Lab'
+  chainId: Number(import.meta.env.VITE_CHAIN_ID) || 1337,
+  networkName: import.meta.env.VITE_NETWORK_NAME || 'Besu Lab'
 };
 
 // Exportar también por separado para conveniencia

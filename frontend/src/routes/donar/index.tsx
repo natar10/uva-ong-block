@@ -48,6 +48,7 @@ function DonarPage() {
   const [walletAddress, setWalletAddress] = useState('');
   const [nombre, setNombre] = useState('');
   const [tipoDonante, setTipoDonante] = useState<TipoDonante>(TipoDonante.Individual);
+  const [tokensGobernanza, setTokensGobernanza] = useState(0)
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState('');
   const [montoDonacion, setMontoDonacion] = useState('');
   const [checkingWallet, setCheckingWallet] = useState(true);
@@ -108,6 +109,7 @@ function DonarPage() {
         console.log('Donante ya registrado:', donante);
         // Llenar los datos del donante
         setNombre(donante.nombre);
+        setTokensGobernanza(parseInt(donante.tokensGobernanza) )
         setTipoDonante(donante.tipoDonante);
         // Avanzar directamente al paso de selección de proyecto
         setActiveStep(2);
@@ -242,7 +244,9 @@ function DonarPage() {
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     Tu tipo de donante: <Chip label={tipoDonante === TipoDonante.Individual ? 'Individual' : 'Empresa'} color="default" />
                   </Typography>
-                  
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Votos disponibles: <Chip label={tokensGobernanza} color="default" />
+                  </Typography>
                 </Box>
               </Card>
 

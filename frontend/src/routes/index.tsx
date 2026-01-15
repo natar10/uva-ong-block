@@ -137,7 +137,7 @@ function HomePage() {
           <Typography
             variant="h3"
             textAlign="center"
-            sx={{ mb: 2, fontWeight: 700 }}
+            sx={{ mb: 2, fontWeight: 700, color: 'black' }}
           >
             ¿Por qué BlockChain4Good?
           </Typography>
