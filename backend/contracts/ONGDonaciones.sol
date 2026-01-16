@@ -75,6 +75,7 @@ contract ONGDonaciones {
         address proveedor;
         string proyectoId;
         uint256 cantidad;
+        uint256 valor; // Valor total en wei a pagar al proveedor
         string tipo;
         uint256 fecha;
         bool validada;
@@ -139,6 +140,13 @@ contract ONGDonaciones {
     event CompraRealizada(
         address indexed comprador,
         string compraId,
+        uint256 valor
+    );
+
+    event CompraValidada(
+        string compraId,
+        address indexed validador,
+        address indexed proveedor,
         uint256 valor
     );
 
@@ -457,9 +465,11 @@ contract ONGDonaciones {
         Proyecto storage proyecto = proyectos[_proyectoId];
 
         require(bytes(proyecto.id).length > 0, "Proyecto no existe");
+        require(proyecto.estado == EstadoProyecto.Activo, "Proyecto no activo");
         require(proyecto.responsable == msg.sender, "No autorizado");
         require(_cantidad > 0, "La cantidad tiene que ser mayor que 0");
         require(compras[_compraId].fecha == 0, "Compra ya existe");
+        require(proveedores[_proveedor].proveedor != address(0), "Proveedor no registrado");
 
         Material memory material = getMaterialByName(tipo_material);
 
@@ -472,16 +482,49 @@ contract ONGDonaciones {
             proveedor: _proveedor,
             proyectoId: _proyectoId,
             cantidad: _cantidad,
+            valor: valor,
             tipo: tipo_material,
             fecha: block.timestamp,
             validada: false
         });
 
+        // Reservar los fondos (restar de cantidadRecaudada)
         proyecto.cantidadRecaudada -= valor;
 
         listaCompras.push(_compraId);
 
         emit CompraRealizada(msg.sender, _compraId, valor);
+    }
+
+    /**
+     * Validar una compra (solo el responsable del proyecto)
+     * Al validar, se transfiere el ETH al proveedor
+     * Actúa como "oráculo humano" - el voluntario verifica en el mundo físico
+     * y luego valida en la blockchain
+     */
+    function validarCompra(string calldata _compraId) external {
+        Compra storage compra = compras[_compraId];
+
+        require(compra.fecha != 0, "Compra no existe");
+        require(!compra.validada, "Compra ya validada");
+
+        Proyecto storage proyecto = proyectos[compra.proyectoId];
+        require(proyecto.responsable == msg.sender, "Solo el responsable puede validar");
+        require(proyecto.estado == EstadoProyecto.Activo, "Proyecto no activo");
+
+        // Marcar como validada
+        compra.validada = true;
+
+        // Actualizar cantidad validada del proyecto
+        proyecto.cantidadValidada += compra.valor;
+
+        // Actualizar ganancias del proveedor
+        proveedores[compra.proveedor].ganancias += compra.valor;
+
+        // Transferir ETH al proveedor
+        payable(compra.proveedor).transfer(compra.valor);
+
+        emit CompraValidada(_compraId, msg.sender, compra.proveedor, compra.valor);
     }
 
     /**
@@ -523,6 +566,78 @@ contract ONGDonaciones {
         string memory _id
     ) public view returns (Donacion memory) {
         return donaciones[_id];
+    }
+
+    function obtenerCompra(
+        string memory _id
+    ) public view returns (Compra memory) {
+        return compras[_id];
+    }
+
+    /**
+     * Obtener todas las compras de un proyecto específico
+     */
+    function obtenerComprasPorProyecto(
+        string memory _proyectoId
+    ) public view returns (Compra[] memory) {
+        uint256 count = 0;
+
+        // Contar compras del proyecto
+        for (uint256 i = 0; i < listaCompras.length; i++) {
+            if (keccak256(bytes(compras[listaCompras[i]].proyectoId)) == keccak256(bytes(_proyectoId))) {
+                count++;
+            }
+        }
+
+        // Crear array con el tamaño exacto
+        Compra[] memory comprasProyecto = new Compra[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < listaCompras.length; i++) {
+            if (keccak256(bytes(compras[listaCompras[i]].proyectoId)) == keccak256(bytes(_proyectoId))) {
+                comprasProyecto[index] = compras[listaCompras[i]];
+                index++;
+            }
+        }
+
+        return comprasProyecto;
+    }
+
+    /**
+     * Trazabilidad completa para un donante:
+     * Retorna todas las donaciones del donante con sus proyectos y compras asociadas
+     */
+    struct TrazabilidadDonacion {
+        Donacion donacion;
+        Proyecto proyecto;
+        Compra[] compras;
+    }
+
+    function obtenerTrazabilidadDonante(
+        address _donante
+    ) public view returns (TrazabilidadDonacion[] memory) {
+        // Primero contar donaciones del donante
+        uint256 countDonaciones = 0;
+        for (uint256 i = 0; i < listaDonaciones.length; i++) {
+            if (donaciones[listaDonaciones[i]].donante == _donante) {
+                countDonaciones++;
+            }
+        }
+
+        TrazabilidadDonacion[] memory trazabilidad = new TrazabilidadDonacion[](countDonaciones);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < listaDonaciones.length; i++) {
+            Donacion memory donacion = donaciones[listaDonaciones[i]];
+            if (donacion.donante == _donante) {
+                trazabilidad[index].donacion = donacion;
+                trazabilidad[index].proyecto = proyectos[donacion.proyectoId];
+                trazabilidad[index].compras = obtenerComprasPorProyecto(donacion.proyectoId);
+                index++;
+            }
+        }
+
+        return trazabilidad;
     }
 
     function obtenerTotalDonantes() public view returns (uint256) {
