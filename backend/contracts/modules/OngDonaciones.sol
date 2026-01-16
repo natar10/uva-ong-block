@@ -8,13 +8,7 @@ import "./OngProyectos.sol";
  * @dev Módulo para gestión de donaciones
  */
 abstract contract OngDonaciones is OngProyectos {
-    /**
-     * Realizar una donación (con ETH real)
-     */
-    function donar(
-        string memory _proyectoId,
-        string calldata tipo_material
-    ) public payable {
+    function donar(string memory _proyectoId) public payable {
         require(msg.value > 0, "La donacion debe ser mayor a 0");
         require(
             bytes(proyectos[_proyectoId].id).length > 0,

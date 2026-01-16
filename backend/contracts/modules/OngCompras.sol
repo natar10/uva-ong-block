@@ -112,7 +112,8 @@ abstract contract OngCompras is OngDonaciones {
         proveedores[compra.proveedor].ganancias += compra.valor;
 
         // Transferir ETH al proveedor
-        payable(compra.proveedor).transfer(compra.valor);
+        (bool success, ) = payable(compra.proveedor).call{value: compra.valor}("");
+        require(success, "Transferencia fallida");
 
         emit CompraValidada(_compraId, msg.sender, compra.proveedor, compra.valor);
     }

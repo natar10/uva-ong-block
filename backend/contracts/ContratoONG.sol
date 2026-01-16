@@ -14,13 +14,6 @@ contract ContratoONG is OngCompras {
     constructor(address _tokenGobernanza) OngBase(_tokenGobernanza) {}
 
     /**
-     * Función para retirar fondos (solo owner)
-     */
-    function retirarFondos() public soloOwner {
-        payable(owner).transfer(address(this).balance);
-    }
-
-    /**
      * Obtener balance del contrato
      */
     function obtenerBalance() public view returns (uint256) {
