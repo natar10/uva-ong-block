@@ -1,30 +1,33 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  TextField,
   Stack,
   Typography,
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Box,
   Container,
-  InputAdornment,
-  IconButton,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
-import ReceiptIcon from '@mui/icons-material/Receipt';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import AppTheme from '../../shared-theme/AppTheme';
+import { VoluntarioProyectoCard } from '../../components/voluntarios/VoluntarioProyectoCard';
+import {
+  UtilizarFondosModal,
+  type RealizarCompraParams,
+} from '../../components/voluntarios/UtilizarFondosModal';
+import { ValidarCompraModal } from '../../components/voluntarios/ValidarCompraModal';
+
+import { useContract } from '../../hooks/useContract';
+import { type Proyecto, EstadoProyecto, proyectosQueryOptions } from '../../data/query/proyectos';
+import { comprasPorProyectoQueryOptions } from '../../data/query/compras';
+import {
+  realizarCompraMutationOptions,
+  validarCompraMutationOptions,
+} from '../../data/mutations/compras';
 
 // --- Ruta /voluntarios
 export const Route = createFileRoute('/voluntarios/')({
@@ -33,34 +36,136 @@ export const Route = createFileRoute('/voluntarios/')({
 
 // --- Componente Voluntarios
 function VoluntariosPage() {
-  const [filtroProyecto, setFiltroProyecto] = useState('');
+  const { getContract } = useContract();
+  const queryClient = useQueryClient();
 
-  // Datos simulados (temporal, puedes reemplazar con blockchain real más adelante)
-  const datosSimulados = useMemo(() => {
-    return [
-      { id: 'VOL1', proyectoId: '1', cantidadValidada: 0.01, fecha: '30 de diciembre de 2025, 16:29' },
-      { id: 'VOL2', proyectoId: '1', cantidadValidada: 0.001, fecha: '30 de diciembre de 2025, 16:33' },
-      { id: 'VOL3', proyectoId: '1', cantidadValidada: 0.01, fecha: '30 de diciembre de 2025, 16:35' },
-      { id: 'VOL4', proyectoId: '1', cantidadValidada: 0.01, fecha: '3 de enero de 2026, 18:58' },
-    ];
+  // Estado para wallet conectada
+  const [walletConectada, setWalletConectada] = useState<string | null>(null);
+
+  // Estado para modales
+  const [modalUtilizarFondosOpen, setModalUtilizarFondosOpen] = useState(false);
+  const [modalValidarCompraOpen, setModalValidarCompraOpen] = useState(false);
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<Proyecto | null>(null);
+  const [validandoCompraId, setValidandoCompraId] = useState<string | null>(null);
+
+  // Obtener wallet conectada
+  useEffect(() => {
+    const getWallet = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+          }) as string[];
+          if (accounts && accounts.length > 0) {
+            setWalletConectada(accounts[0]);
+          }
+        } catch (error) {
+          console.error('Error al obtener wallet:', error);
+        }
+      }
+    };
+    getWallet();
+
+    // Escuchar cambios de cuenta
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts: unknown) => {
+        const accountsArray = accounts as string[];
+        setWalletConectada(accountsArray[0] || null);
+      });
+    }
   }, []);
 
-  // Filtrar voluntarios por proyecto
-  const voluntariosFiltrados = useMemo(() => {
-    return datosSimulados.filter((v) =>
-      filtroProyecto ? v.proyectoId.includes(filtroProyecto) : true
+  // Query para obtener proyectos
+  const {
+    data: proyectosData,
+    isLoading: loadingProyectos,
+    error: errorProyectos,
+  } = useQuery(proyectosQueryOptions(getContract));
+
+  // Query para obtener compras del proyecto seleccionado
+  const {
+    data: comprasDelProyecto = [],
+    isLoading: loadingCompras,
+    refetch: refetchCompras,
+  } = useQuery({
+    ...comprasPorProyectoQueryOptions(getContract, proyectoSeleccionado?.id || ''),
+    enabled: !!proyectoSeleccionado?.id && modalValidarCompraOpen,
+  });
+
+  // Mutation para realizar compra
+  const realizarCompraMutation = useMutation({
+    ...realizarCompraMutationOptions(getContract),
+    onSuccess: () => {
+      // Refrescar proyectos y compras
+      queryClient.invalidateQueries({ queryKey: ['proyectos'] });
+      if (proyectoSeleccionado) {
+        queryClient.invalidateQueries({ queryKey: ['compras', proyectoSeleccionado.id] });
+      }
+    },
+  });
+
+  // Mutation para validar compra
+  const validarCompraMutation = useMutation({
+    ...validarCompraMutationOptions(getContract),
+    onSuccess: () => {
+      // Refrescar proyectos y compras
+      queryClient.invalidateQueries({ queryKey: ['proyectos'] });
+      if (proyectoSeleccionado) {
+        queryClient.invalidateQueries({ queryKey: ['compras', proyectoSeleccionado.id] });
+        refetchCompras();
+      }
+      setValidandoCompraId(null);
+    },
+    onError: () => {
+      setValidandoCompraId(null);
+    },
+  });
+
+  // Filtrar proyectos donde el usuario conectado es responsable
+  const misProyectos = useMemo(() => {
+    if (!walletConectada || !proyectosData?.proyectos) return [];
+    return proyectosData.proyectos.filter(
+      (p) =>
+        p.responsable.toLowerCase() === walletConectada.toLowerCase() &&
+        p.estado === EstadoProyecto.Activo
     );
-  }, [filtroProyecto, datosSimulados]);
+  }, [walletConectada, proyectosData?.proyectos]);
 
-  // Estadísticas
-  const stats = useMemo(() => {
-    const totalValidaciones = voluntariosFiltrados.length;
-    const totalCantidad = voluntariosFiltrados.reduce((sum, v) => sum + v.cantidadValidada, 0);
-    return { totalValidaciones, totalCantidad: totalCantidad.toFixed(4) };
-  }, [voluntariosFiltrados]);
+  // Handlers para abrir modales
+  const handleUtilizarFondos = (proyecto: Proyecto) => {
+    setProyectoSeleccionado(proyecto);
+    realizarCompraMutation.reset();
+    setModalUtilizarFondosOpen(true);
+  };
 
-  const handleClearFilters = () => {
-    setFiltroProyecto('');
+  const handleValidarCompra = (proyecto: Proyecto) => {
+    setProyectoSeleccionado(proyecto);
+    validarCompraMutation.reset();
+    setModalValidarCompraOpen(true);
+  };
+
+  // Handler para realizar compra
+  const handleConfirmarCompra = (params: RealizarCompraParams) => {
+    realizarCompraMutation.mutate(params);
+  };
+
+  // Handler para validar compra
+  const handleValidar = (compraId: string) => {
+    setValidandoCompraId(compraId);
+    validarCompraMutation.mutate({ compraId });
+  };
+
+  // Cerrar modales
+  const handleCloseUtilizarFondos = () => {
+    setModalUtilizarFondosOpen(false);
+    setProyectoSeleccionado(null);
+    realizarCompraMutation.reset();
+  };
+
+  const handleCloseValidarCompra = () => {
+    setModalValidarCompraOpen(false);
+    setProyectoSeleccionado(null);
+    validarCompraMutation.reset();
   };
 
   return (
@@ -70,93 +175,97 @@ function VoluntariosPage() {
       <Box sx={{ minHeight: '100vh', py: 8, background: '#f5f5f5' }}>
         {/* Hero */}
         <Stack spacing={3} alignItems="center" textAlign="center" sx={{ mb: 6 }}>
-          <ReceiptIcon sx={{ fontSize: 60, color: 'primary.main' }} />
+          <VolunteerActivismIcon sx={{ fontSize: 60, color: 'primary.main' }} />
           <Typography variant="h2" sx={{ fontWeight: 800, color: 'black' }}>
-            Registro de Voluntarios
+            Panel de Voluntario
           </Typography>
           <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 700 }}>
-            Transparencia total: Todas las validaciones registradas en blockchain
+            Gestiona los proyectos de los que eres responsable
           </Typography>
         </Stack>
 
-        {/* Estadísticas */}
-        <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 4 }}>
-          <Card sx={{ minWidth: 200 }}>
-            <CardContent>
-              <Typography color="text.secondary" gutterBottom>Total Validaciones</Typography>
-              <Typography variant="h4" color="primary.main">{stats.totalValidaciones}</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ minWidth: 200 }}>
-            <CardContent>
-              <Typography color="text.secondary" gutterBottom>Total Cantidad Validada</Typography>
-              <Typography variant="h4" color="success.main">{stats.totalCantidad} ETH</Typography>
-            </CardContent>
-          </Card>
-        </Stack>
-
-        {/* Filtro por proyecto */}
-        <Card sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
-          <CardContent>
-            <Stack spacing={2}>
-              <Typography variant="h6">Filtros</Typography>
-              <TextField
-                label="Filtrar por Proyecto"
-                placeholder="ID del proyecto"
-                value={filtroProyecto}
-                onChange={(e) => setFiltroProyecto(e.target.value)}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                  endAdornment: filtroProyecto && (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={handleClearFilters}><ClearIcon /></IconButton>
-                    </InputAdornment>
-                  )
-                }}
-                fullWidth
-              />
-            </Stack>
-          </CardContent>
-        </Card>
-
-        {/* Tabla de voluntarios */}
         <Container maxWidth="lg">
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>ID Proyecto</TableCell>
-                  <TableCell align="right">Cantidad Validada (ETH)</TableCell>
-                  <TableCell>Fecha</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {voluntariosFiltrados.map((v) => (
-                  <TableRow key={v.id}>
-                    <TableCell>{v.id}</TableCell>
-                    <TableCell>{v.proyectoId}</TableCell>
-                    <TableCell align="right">{v.cantidadValidada}</TableCell>
-                    <TableCell>{v.fecha}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Container>
+          {/* Verificar wallet conectada */}
+          {!walletConectada ? (
+            <Alert severity="warning" sx={{ mb: 4 }}>
+              Conecta tu wallet para ver los proyectos de los que eres responsable.
+            </Alert>
+          ) : (
+            <Alert severity="info" sx={{ mb: 4 }}>
+              Mostrando proyectos donde tu wallet ({walletConectada.substring(0, 10)}
+              ...) es responsable.
+            </Alert>
+          )}
 
-        {/* Información adicional */}
-        <Container maxWidth="lg" sx={{ mt: 8 }}>
-          <Card sx={{ p: 4 }}>
-            <Typography variant="h5" sx={{ mb: 3 }}>Sobre la Transparencia en Blockchain</Typography>
-            <Stack spacing={2}>
-              <Typography>🔗 <strong>Inmutabilidad:</strong> Cada validación queda registrada permanentemente en blockchain.</Typography>
-              <Typography>👁️ <strong>Visibilidad Total:</strong> Todas las acciones son verificables.</Typography>
-              <Typography>⏱️ <strong>Tiempo Real:</strong> Los registros se actualizan instantáneamente.</Typography>
-            </Stack>
-          </Card>
+          {/* Loading */}
+          {loadingProyectos && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {/* Error */}
+          {errorProyectos && (
+            <Alert severity="error" sx={{ mb: 4 }}>
+              Error al cargar proyectos: {errorProyectos.message}
+            </Alert>
+          )}
+
+          {/* Lista de proyectos */}
+          {!loadingProyectos && walletConectada && (
+            <>
+              {misProyectos.length === 0 ? (
+                <Alert severity="warning">
+                  No tienes proyectos asignados como responsable. Contacta al
+                  administrador para ser asignado a un proyecto.
+                </Alert>
+              ) : (
+                <Stack spacing={3}>
+                  <Typography variant="h5" fontWeight={600}>
+                    Mis Proyectos ({misProyectos.length})
+                  </Typography>
+
+                  {misProyectos.map((proyecto) => (
+                    <VoluntarioProyectoCard
+                      key={proyecto.id}
+                      proyecto={proyecto}
+                      onUtilizarFondos={handleUtilizarFondos}
+                      onValidarCompra={handleValidarCompra}
+                    />
+                  ))}
+                </Stack>
+              )}
+            </>
+          )}
         </Container>
       </Box>
+
+      {/* Modal Utilizar Fondos */}
+      <UtilizarFondosModal
+        open={modalUtilizarFondosOpen}
+        onClose={handleCloseUtilizarFondos}
+        proyecto={proyectoSeleccionado}
+        onConfirmar={handleConfirmarCompra}
+        isLoading={realizarCompraMutation.isPending}
+        isSuccess={realizarCompraMutation.isSuccess}
+        isError={realizarCompraMutation.isError}
+        error={realizarCompraMutation.error}
+      />
+
+      {/* Modal Validar Compra */}
+      <ValidarCompraModal
+        open={modalValidarCompraOpen}
+        onClose={handleCloseValidarCompra}
+        proyecto={proyectoSeleccionado}
+        compras={comprasDelProyecto}
+        isLoadingCompras={loadingCompras}
+        onValidar={handleValidar}
+        isValidating={validarCompraMutation.isPending}
+        validatingCompraId={validandoCompraId}
+        isSuccess={validarCompraMutation.isSuccess}
+        isError={validarCompraMutation.isError}
+        error={validarCompraMutation.error}
+      />
 
       <Footer />
     </AppTheme>

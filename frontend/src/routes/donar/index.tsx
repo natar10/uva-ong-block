@@ -202,10 +202,7 @@ function DonarPage() {
       <Box
         sx={{
           minHeight: '100vh',
-          background: (theme) =>
-            theme.palette.mode === 'light'
-              ? 'linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%)'
-              : 'linear-gradient(180deg, #0a1929 0%, #001e3c 100%)',
+          background: 'linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%)',
           py: 8,
         }}
       >
