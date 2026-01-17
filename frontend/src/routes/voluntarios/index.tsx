@@ -67,7 +67,7 @@ function VoluntariosPage() {
     getWallet();
 
     // Escuchar cambios de cuenta
-    if (window.ethereum) {
+    if (window.ethereum?.on) {
       window.ethereum.on('accountsChanged', (accounts: unknown) => {
         const accountsArray = accounts as string[];
         setWalletConectada(accountsArray[0] || null);
