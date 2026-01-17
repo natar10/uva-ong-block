@@ -7,7 +7,7 @@ Durante la fase conceptual se diseñó un sistema ambicioso que incluía múltip
 El modelo conceptual contemplaba diversos componentes que fueron descartados en la implementación:
 
 \begin{itemize}
-    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados (constructoras, distribuidores de material educativo, editoriales) con historial de compras. Este mecanismo fue eliminado para simplificar el flujo de fondos.
+    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados (constructoras, distribuidores de material educativo, editoriales) con historial de compras. Este mecanismo fue modificado para simplificar el flujo de fondos. En la versión a actual, todos los proveedores venden todo tipo de material, y el precio es estático, fijado en el contrato. 
 
     \item \textbf{Administración ONG con billetera separada:} Se planeaba una cuenta administrativa que recibiría automáticamente el 20\% de cada donación para gastos logísticos. Esta funcionalidad no se implementó.
 
@@ -15,8 +15,10 @@ El modelo conceptual contemplaba diversos componentes que fueron descartados en 
 
     \item \textbf{Ciclos de votación y quema de tokens:} Se diseñó un sistema de votaciones anuales donde los tokens no utilizados se quemaban al final del ciclo. La implementación actual permite votaciones continuas sin restricciones temporales.
 
-    \item \textbf{Metas de donación y redistribución:} El diseño conceptual incluía metas para cada proyecto y redistribución automática de fondos cuando un proyecto era cancelado. Estas reglas no fueron implementadas.
+    \item \textbf{Objetivo de los tokens de votación:} En la misma línea, los tokens de gobernanza distribuidas ahora tienen una utilidad diferente. En vez de utilizarse para asignar los porcentajes de la donación que se lleva cada proyecto, ahora se utilizan para votar a favor/en contra de proyectos, que necesitan tener un balance de votos positivos determinado para estar activos (cuando un proyecto deja de estar activo, la cantidad donada sin validar se devuelve).
 
+    \item \textbf{Metas de donación y redistribución:} El diseño conceptual incluía metas para cada proyecto y redistribución automática de fondos cuando un proyecto era cancelado. Estas reglas no fueron implementadas.
+    
     \item \textbf{Distinción entre tipos de donante para tokens:} Aunque el contrato mantiene el enum \texttt{TipoDonante}, no se implementó la regla diferencial de asignación de tokens (raíz cuadrada para empresas vs. proporcional para individuos).
 \end{itemize}
 
@@ -31,7 +33,7 @@ El contrato final \texttt{ONGDonaciones.sol} se centra en las funcionalidades es
 
     \item \textbf{Tokens de gobernanza básicos:} Se asigna 1 token por cada ETH donado, sin distinción por tipo de donante.
 
-    \item \textbf{Votación simplificada:} Los donantes pueden votar en cualquier momento, gastando sus tokens para incrementar el contador de votos del proyecto.
+    \item \textbf{Votación simplificada:} Los donantes pueden votar en cualquier momento, gastando sus tokens para incrementar o disminuir el contador de votos del proyecto.
 
     \item \textbf{Control de acceso básico:} Solo el owner puede crear proyectos, validar fondos y cambiar estados, implementado mediante el modificador \texttt{soloOwner}.
 \end{itemize}

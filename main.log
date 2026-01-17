@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.12)  17 JAN 2026 21:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.12)  17 JAN 2026 20:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**./main.tex
-(main.tex
+**./latex/main.tex
+(latex/main.tex
 LaTeX2e <2024-11-01>
 L3 programming layer <2024-11-02>
 (C:\Users\Acer\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -417,10 +417,8 @@ ex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count316
 \l__pdf_internal_box=\box59
-) (main.aux
-LaTeX Info: Redefining \. on input line 12.
-LaTeX Info: Redefining \% on input line 12.
 )
+No file main.aux.
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 74.
@@ -506,148 +504,69 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-<./assets/UVA-Logo.jpg, id=3, 211.91672pt x 142.65797pt>
-File: ./assets/UVA-Logo.jpg Graphic file (type jpg)
-<use ./assets/UVA-Logo.jpg>
-Package pdftex.def Info: ./assets/UVA-Logo.jpg  used on input line 76.
-(pdftex.def)             Requested size: 330.42041pt x 222.44102pt.
+
+LaTeX Warning: File `./assets/UVA-Logo.jpg' not found on input line 76.
+
+
+! Package pdftex.def Error: File `./assets/UVA-Logo.jpg' not found: using draft
+ setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 
+     
+? 
 
 
 [1
 
-{C:/Users/Acer/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./assets/UVA-
-Logo.jpg>] (main.toc
-LaTeX Info: Redefining \. on input line 1.
-LaTeX Info: Redefining \% on input line 1.
-)
+{C:/Users/Acer/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+No file main.toc.
 \tf@toc=\write3
 \openout3 = `main.toc'.
 
 
 
-[2] (sections/descripcion.tex) (sections/simplificacion.tex
+[2]
 
-[3]
+! LaTeX Error: File `sections/descripcion.tex' not found.
 
-[4]) (sections/implementacion_besu.tex
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: tex)
 
-LaTeX Warning: Citation `SolidityDocs' on page 5 undefined on input line 4.
+Enter file name: 
+(C:\Users\Acer\AppData\Local\Programs\MiKTeX\tex/latex/tools\.tex File ignored)
 
+! LaTeX Error: File `sections/simplificacion.tex' not found.
 
-LaTeX Warning: Citation `HyperledgerBesu' on page 5 undefined on input line 4.
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: tex)
 
+Enter file name: 
+(C:\Users\Acer\AppData\Local\Programs\MiKTeX\tex/latex/tools\.tex File ignored)
 
-LaTeX Warning: Citation `RemixIDE' on page 5 undefined on input line 4.
+! LaTeX Error: File `sections/implementacion_besu.tex' not found.
 
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: tex)
 
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.92 \input{sections/implementacion_besu}
+                                         ^^M
+End of file on the terminal!
 
-[5]
-Overfull \hbox (9.58601pt too wide) in paragraph at lines 49--50
-[]\OT1/cmtt/m/n/10.95 crearProyecto(string id, string descripcion, address resp
-onsable)\OT1/cmr/m/n/10.95 : Fun-ci^^Son res-trin-
- []
-
-
-Overfull \hbox (5.1851pt too wide) in paragraph at lines 51--52
-[]\OT1/cmtt/m/n/10.95 donar(string proyectoId) payable\OT1/cmr/m/n/10.95 : Fun-
-ci^^Son prin-ci-pal que pro-ce-sa do-na-cio-nes. Re-ci-be ETH,
- []
-
-
-Overfull \hbox (3.89874pt too wide) in paragraph at lines 53--54
-[]\OT1/cmtt/m/n/10.95 votarProyecto(string proyectoId, uint256 cantidadVotos)\O
-T1/cmr/m/n/10.95 : Per-mi-te a los do-nan-tes gas-
- []
-
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 75.
-
-
-[6]
-Overfull \hbox (9.49016pt too wide) in paragraph at lines 89--90
-[]\OT1/cmtt/m/n/10.95 DonacionRealizada(address indexed donante, string proyect
-oId, uint256 cantidad) 
- []
-
-
-Overfull \hbox (42.37265pt too wide) in paragraph at lines 92--93
-[]\OT1/cmtt/m/n/10.95 VotacionRealizada(address indexed donante, string proyect
-oId, uint256 cantidad[]votos) 
- []
-
-
-Overfull \hbox (30.87527pt too wide) in paragraph at lines 93--94
-[]\OT1/cmtt/m/n/10.95 CompraRealizada(address indexed donante, string comprador
-Id, uint256 valor[]compra)) 
- []
-
-
-LaTeX Warning: Citation `MetaMask' on page 7 undefined on input line 103.
-
-
-
-[7]) (sections/implementacion_frontend.tex
-
-LaTeX Warning: Citation `ReactDocs' on page 8 undefined on input line 8.
-
-
-LaTeX Warning: Citation `EthersJS' on page 8 undefined on input line 14.
-
-
-
-[8]
-
-[9]
-
-LaTeX Warning: Citation `vercel' on page 10 undefined on input line 115.
-
-
-LaTeX Warning: Citation `vercel-platform' on page 10 undefined on input line 11
-5.
-
-
-
-[10]) (sections/conclusiones.tex
-
-[11]
-
-[12]
-
-[13])
-
-[14] (main.bbl) (main.aux
-LaTeX Info: Redefining \. on input line 12.
-LaTeX Info: Redefining \% on input line 12.
-)
- ***********
-LaTeX2e <2024-11-01>
-L3 programming layer <2024-11-02>
- ***********
-
-
-LaTeX Warning: There were undefined references.
-
- ) 
+ 
 Here is how much of TeX's memory you used:
- 14192 strings out of 473682
- 221035 string characters out of 5719691
- 851220 words of memory out of 5000000
- 37000 multiletter control sequences out of 15000+600000
- 564815 words of font info for 60 fonts, out of 8000000 for 9000
+ 13702 strings out of 473682
+ 215751 string characters out of 5719691
+ 819220 words of memory out of 5000000
+ 36623 multiletter control sequences out of 15000+600000
+ 562852 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 89i,7n,93p,560b,2068s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\Acer\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
-095.pk><C:/Users/Acer/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmbx10.pfb><C:/Users/Acer/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-amsfonts/cm/cmbx12.pfb><C:/Users/Acer/AppData/Local/Programs/MiKTeX/fonts/type1
-/public/amsfonts/cm/cmr10.pfb><C:/Users/Acer/AppData/Local/Programs/MiKTeX/font
-s/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Acer/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/Acer/AppData/Local/Progra
-ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Acer/AppData/Local/
-Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (14 pages, 233957 bytes).
-PDF statistics:
- 417 PDF objects out of 1000 (max. 8388607)
- 95 named destinations out of 1000 (max. 500000)
- 342 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+ 89i,7n,93p,329b,458s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!

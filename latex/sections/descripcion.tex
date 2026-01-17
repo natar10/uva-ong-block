@@ -14,6 +14,7 @@ El sistema implementado contempla tres actores principales:
     \item \textbf{Donantes:} Personas físicas o jurídicas que realizan contribuciones a la ONG y participan en la votación de proyectos mediante tokens de gobernanza.
     \item \textbf{Responsables de proyectos:} Miembros de la ONG encargados de la gestión de proyectos específicos.
     \item \textbf{Administrador (Owner):} Cuenta que despliega el contrato y tiene permisos para crear proyectos y validar fondos.
+    \item \textbf{Proveedores:} Entidades que suministras los materiales necesarios para realizar los proyectos.
 \end{itemize}
 
 \subsection{Flujo operativo}
@@ -23,6 +24,7 @@ El funcionamiento del sistema se estructura en torno a cuatro operaciones princi
 \begin{enumerate}
     \item \textbf{Registro de donantes:} Los usuarios se registran en el sistema especificando su tipo (individual o empresa).
     \item \textbf{Realización de donaciones:} Los donantes envían fondos en ETH a proyectos específicos, recibiendo automáticamente tokens de gobernanza.
-    \item \textbf{Votación de proyectos:} Los donantes utilizan sus tokens para votar por los proyectos que desean apoyar.
+    \item \textbf{Votación de proyectos:} Los donantes utilizan sus tokens para votar por los proyectos que desean apoyar, o desprestigiar a los que no considere decentes.
+    \item \textbf{Compra de materiales:} Los responsables de los proyectos adquieren materiales a los proveedores, utilizando los fondos para ello (validando que el dinero de las donaciones se usa de manera legítima).
     \item \textbf{Validación de fondos:} El administrador valida el uso correcto de los fondos recaudados.
 \end{enumerate}

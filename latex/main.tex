@@ -1,5 +1,7 @@
 \documentclass[11pt, letterpaper]{article}
 \usepackage[spanish]{babel}
+
+\usepackage{bookmark}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{booktabs}
 \usepackage{url}
@@ -10,9 +12,27 @@
 \usepackage{float}
 \usepackage{enumitem}
 \usepackage{newunicodechar}
+
 \newunicodechar{├}{|}
 \usepackage{url}
 \usepackage[margin=2.5cm]{geometry}
+
+\lstdefinelanguage{Solidity}{
+  keywords={
+    contract, interface, library, function, modifier, event, struct, enum,
+    mapping, address, uint, uint256, int, bool, string, bytes,
+    public, private, internal, external,
+    view, pure, payable,
+    require, revert, assert, emit, return, new, delete
+  },
+  keywordstyle=\color{blue}\bfseries,
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+}
+
+
 
 % Configuración para bash
 \lstset{
@@ -52,7 +72,6 @@
 \setcounter{secnumdepth}{3}
 
 \begin{document}
-
 \maketitle
 
 \newpage
@@ -67,7 +86,7 @@
 \input{sections/descripcion}
 
 %-------Decisiones y simplicaciones de diseño inicial-----
-\input{sections/simplificacino}
+\input{sections/simplificacion}
 
 %-------Implementación en Besu-----
 \input{sections/implementacion_besu}

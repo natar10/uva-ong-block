@@ -9,10 +9,10 @@ Este proyecto demuestra la viabilidad de implementar un sistema de gobernanza de
 El sistema implementado proporciona trazabilidad completa de las donaciones. Cada transacción queda registrada de forma inmutable en la blockchain, permitiendo a cualquier persona verificar:
 
 \begin{itemize}
-    \item El origen de cada donación (dirección del donante)
-    \item El destino específico de los fondos (proyecto beneficiado)
-    \item El momento exacto de la transacción (timestamp)
-    \item El total recaudado y validado para cada proyecto
+    \item El origen de cada donación (dirección del donante).
+    \item El destino específico de los fondos (proyecto beneficiado).
+    \item El momento exacto de la transacción (timestamp).
+    \item El total recaudado y validado para cada proyecto.
 \end{itemize}
 
 Esta transparencia elimina la dependencia de auditorías periódicas tradicionales, proporcionando verificación continua y en tiempo real.
@@ -26,12 +26,13 @@ El mecanismo de tokens de gobernanza permite la participación directa de los do
 La implementación proporcionó experiencia práctica en:
 
 \begin{itemize}
-    \item Desarrollo de contratos inteligentes en Solidity
-    \item Despliegue en Hyperledger Besu utilizando Remix
-    \item Integración frontend-blockchain mediante ethers.js
-    \item Gestión de billeteras con MetaMask
-    \item Configuración de permisos y redes personalizadas
-    \item Manejo de transacciones síncronas y asíncronas
+    \item Desarrollo de contratos inteligentes en Solidity.
+    \item Despliegue en Hyperledger Besu utilizando Remix.
+    \item Integración frontend-blockchain mediante ethers.js.
+    \item Gestión de billeteras con MetaMask.
+    \item Configuración de permisos y redes personalizadas.
+    \item Manejo de transacciones síncronas y asíncronas.
+    \item Utilización de los tokens ERC20 para implementar un sistema de decisión basado en tokens de gobernanza.
 \end{itemize}
 
 \subsection{Desafíos identificados}
@@ -54,18 +55,18 @@ Las decisiones de simplificación tomadas durante la implementación tuvieron ef
 
 \textbf{Aspectos positivos:}
 \begin{itemize}
-    \item Mayor facilidad de comprensión del código
-    \item Menos superficie de ataque para vulnerabilidades
-    \item Desarrollo más rápido y debugging simplificado
-    \item Menor costo de gas en cada operación
+    \item Mayor facilidad de comprensión del código.
+    \item Menos superficie de ataque para vulnerabilidades.
+    \item Desarrollo más rápido y debugging simplificado.
+    \item Menor costo de gas en cada operación.
 \end{itemize}
 
 \textbf{Funcionalidades perdidas:}
 \begin{itemize}
-    \item No hay control automático de distribución de fondos
-    \item Falta el mecanismo de proveedores verificados
-    \item No se implementó la cuenta administrativa separada
-    \item Sin ciclos de votación con renovación de tokens
+    \item No hay control automático de distribución de fondos.
+    \item Falta el mecanismo de proveedores verificados.
+    \item No se implementó la cuenta administrativa separada.
+    \item Sin ciclos de votación con renovación de tokens.
 \end{itemize}
 
 \subsection{Trabajo futuro}
@@ -79,9 +80,9 @@ Para evolucionar este proyecto hacia un sistema de producción, se identifican l
 
     \item \textbf{Mejoras de seguridad:}
     \begin{itemize}
-        \item Implementar pausado de emergencia (circuit breaker)
-        \item Añadir límites máximos por transacción
-        \item Incluir mecanismos de recuperación ante errores
+        \item Implementar pausado de emergencia (circuit breaker).
+        \item Añadir límites máximos por transacción.
+        \item Incluir mecanismos de recuperación ante errores.
     \end{itemize}
 
     \item \textbf{Optimización de gas:} Revisar estructuras de datos y lógica para reducir costos de transacción, especialmente importante si se migra a redes públicas.
@@ -92,6 +93,10 @@ Para evolucionar este proyecto hacia un sistema de producción, se identifican l
         \item Añadir visualizaciones gráficas de distribución de fondos
         \item Implementar notificaciones en tiempo real de eventos blockchain
     \end{itemize}
+
+    \item \textbf{Mejorar la lógica de uso de los tokens de gobernanza:} Implementar una lógica más compleja y segura para el uso de los tokens. El sitema actual tiene varios puntos débiles que confían en que los usuarios ''sean buenos''. 
+    
+    Por ejemplo, un donante puede comprar tokens de gobernenza al resto de donantes, votando en contra de un proyecto al que ha donado, haciendo que se le devualva su dinero, incluso puede que más del otorgado inicialmente, o simplemente tener plena postestad para decidir que un proyecto se reanude, o se cancele.  
 
     \item \textbf{Testing exhaustivo:} Desarrollar suite completa de tests unitarios y de integración utilizando Hardhat o Foundry.
 

@@ -5,13 +5,13 @@ Se desarrolló una aplicación web utilizando React con TypeScript y Vite como h
 \subsection{Tecnologías utilizadas}
 
 \begin{itemize}
-    \item \textbf{React 19:} Framework principal para la interfaz de usuario
+    \item \textbf{React 19\cite{ReactDocs}:} Framework principal para la interfaz de usuario
     \item \textbf{TypeScript:} Para tipado estático y mayor seguridad en el desarrollo
     \item \textbf{Vite:} Herramienta de construcción moderna y rápida
     \item \textbf{Material-UI (MUI):} Biblioteca de componentes para una interfaz profesional
     \item \textbf{TanStack Router:} Gestión de rutas y navegación
     \item \textbf{TanStack Query:} Manejo de estado y cache de datos blockchain
-    \item \textbf{ethers.js:} Librería para interactuar con Ethereum/Besu
+    \item \textbf{ethers.js\cite{EthersJS}:} Librería para interactuar con Ethereum/Besu
     \item \textbf{MetaMask:} Extensión de navegador para gestión de billeteras
 \end{itemize}
 
@@ -24,12 +24,16 @@ La aplicación se estructura en capas separando responsabilidades:
 Se crearon hooks de React para encapsular la lógica de interacción con el contrato:
 
 \begin{itemize}
-    \item \texttt{useContract}: Hook base que inicializa la conexión con el contrato utilizando el ABI y la dirección configurada
-    \item \texttt{useProyectos}: Obtiene la lista de proyectos activos
-    \item \texttt{useDonaciones}: Consulta el historial de donaciones
-    \item \texttt{useDonante}: Recupera información del donante conectado
-    \item \texttt{useRealizarDonacion}: Gestiona el proceso de realizar una donación
-    \item \texttt{useRegistrarDonante}: Maneja el registro de nuevos donantes
+    \item \texttt{useContract}: Hook base que inicializa la conexión con el contrato utilizando el ABI y la dirección configurada.
+    \item \texttt{useProyectos}: Obtiene la lista de proyectos activos.
+    \item \texttt{useDonaciones}: Consulta el historial de donaciones.
+    \item \texttt{useDonante}: Recupera información del donante conectado.
+    \item \texttt{useRealizarDonacion}: Gestiona el proceso de realizar una donación.
+    \item \texttt{useRegistrarDonante}: Maneja el registro de nuevos donantes.
+    \item \texttt{useVotarProyecto}: Permite votar por un proyecto específico.
+    \item \texttt{useProveedores}
+    \item \texttt{useRegistrarProveedor}
+    \item \texttt{useCompras}
 \end{itemize}
 
 \subsubsection{Capa de datos}
@@ -46,9 +50,9 @@ Se implementó una arquitectura basada en queries y mutations siguiendo el patr�
 El archivo \texttt{contractConfig.ts} centraliza la configuración:
 
 \begin{itemize}
-    \item Dirección del contrato desplegado
-    \item ABI del contrato (importado desde el JSON generado por Remix)
-    \item Parámetros de conexión a la red
+    \item Dirección del contrato desplegado.
+    \item ABI del contrato (importado desde el JSON generado por Remix).
+    \item Parámetros de conexión a la red.
 \end{itemize}
 
 \subsection{Funcionalidades implementadas}
@@ -56,12 +60,11 @@ El archivo \texttt{contractConfig.ts} centraliza la configuración:
 La aplicación permite a los usuarios:
 
 \begin{enumerate}
-    \item \textbf{Conectar billetera:} Mediante MetaMask, conectándose automáticamente a la red BLOCK LAB
-    \item \textbf{Visualizar proyectos:} Lista de proyectos activos con su información detallada
-    \item \textbf{Realizar donaciones:} Seleccionar un proyecto y enviar ETH
-    \item \textbf{Consultar historial:} Ver todas las donaciones realizadas
-    \item \textbf{Votar proyectos:} Utilizar tokens de gobernanza para votar
-    \item \textbf{Registrarse como donante:} Crear un perfil en el sistema
+    \item \textbf{Conectar billetera:} Mediante MetaMask, conectándose automáticamente a la red BLOCK LAB.
+    \item \textbf{Visualizar proyectos:} Lista de proyectos activos con su información detallada.
+    \item \textbf{Consultar historial:} Ver todas las donaciones realizadas.
+    \item \textbf{Votar proyectos:} Utilizar tokens de gobernanza para votar.
+    \item \textbf{Registrarse como donante:} Crear un perfil en el sistema.
 \end{enumerate}
 
 \subsection{Integración con MetaMask}
@@ -99,22 +102,23 @@ Un aspecto fundamental del diseño es el manejo correcto de las interacciones co
 La aplicación utiliza Material-UI para proporcionar una experiencia de usuario moderna:
 
 \begin{itemize}
-    \item Dashboard con estadísticas de donaciones
-    \item Cards visuales para cada proyecto con imágenes
-    \item Formularios intuitivos para donaciones y registro
-    \item Tablas con el historial completo de transacciones
-    \item Modo claro/oscuro adaptativo
+    \item Dashboard con estadísticas de donaciones.
+    \item Cards visuales para cada proyecto con imágenes.
+    \item Formularios intuitivos para donaciones y registro.
+    \item Tablas con el historial completo de transacciones.
+    \item Uso de modales (pop-ups) para detalles y confirmaciones.
+    \item Modo claro/oscuro adaptativo.
 \end{itemize}
 
 \subsection{Despliegue}
 
-El frontend fue desplegado en Vercel, lo que permite:
+El frontend fue desplegado en Vercel \cite{vercel}\cite{vercel-platform}, lo que permite:
 
 \begin{itemize}
-    \item Acceso público a la aplicación
-    \item Despliegue continuo desde el repositorio
-    \item HTTPS automático
-    \item Integración con MetaMask en entorno de producción
+    \item Acceso público a la aplicación.
+    \item Despliegue continuo desde el repositorio.
+    \item HTTPS automático.
+    \item Integración con MetaMask en entorno de producción.
 \end{itemize}
 
 \subsection{Lecciones aprendidas}
