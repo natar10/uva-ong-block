@@ -2,6 +2,73 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_tokenGobernanza",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "comprador",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "compraId",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "valor",
+				"type": "uint256"
+			}
+		],
+		"name": "CompraRealizada",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "compraId",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "validador",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "proveedor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "valor",
+				"type": "uint256"
+			}
+		],
+		"name": "CompraValidada",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "_id",
 				"type": "string"
@@ -17,7 +84,7 @@
 				"type": "address"
 			},
 			{
-				"internalType": "enum ONGDonaciones.EstadoProyecto",
+				"internalType": "enum OngBase.EstadoProyecto",
 				"name": "_estado",
 				"type": "uint8"
 			}
@@ -26,17 +93,6 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_tokenGobernanza",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	},
 	{
 		"anonymous": false,
@@ -162,11 +218,44 @@
 		"inputs": [
 			{
 				"internalType": "string",
+				"name": "_compraId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_proyectoId",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_proveedor",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "tipo_material",
+				"type": "string"
+			},
+			{
+				"internalType": "uint128",
+				"name": "_cantidad",
+				"type": "uint128"
+			}
+		],
+		"name": "realizarCompra",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
 				"name": "_nombre",
 				"type": "string"
 			},
 			{
-				"internalType": "enum ONGDonaciones.TipoDonante",
+				"internalType": "enum OngBase.TipoDonante",
 				"name": "_tipo",
 				"type": "uint8"
 			}
@@ -177,8 +266,24 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "retirarFondos",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_proveedor",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "nombre",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_descripcion",
+				"type": "string"
+			}
+		],
+		"name": "registrarProveedor",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -214,6 +319,19 @@
 		],
 		"name": "TokenGobernanzaActualizado",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_compraId",
+				"type": "string"
+			}
+		],
+		"name": "validarCompra",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -327,6 +445,65 @@
 				"type": "string"
 			}
 		],
+		"name": "compras",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "comprador",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "proveedor",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "proyectoId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "cantidad",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "valor",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "tipo",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "fecha",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "validada",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"name": "donaciones",
 		"outputs": [
 			{
@@ -379,7 +556,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum ONGDonaciones.TipoDonante",
+				"internalType": "enum OngBase.TipoDonante",
 				"name": "tipoDonante",
 				"type": "uint8"
 			},
@@ -411,6 +588,56 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nombre",
+				"type": "string"
+			}
+		],
+		"name": "getMaterialByName",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "nombre",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct OngBase.Material",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "listaCompras",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -474,6 +701,30 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "materiales",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "nombre",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "valor",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "obtenerBalance",
 		"outputs": [
@@ -481,6 +732,138 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_id",
+				"type": "string"
+			}
+		],
+		"name": "obtenerCompra",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "comprador",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cantidad",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "tipo",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fecha",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "validada",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct OngBase.Compra",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_proyectoId",
+				"type": "string"
+			}
+		],
+		"name": "obtenerComprasPorProyecto",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "comprador",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "proveedor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "proyectoId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cantidad",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "valor",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "tipo",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fecha",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "validada",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct OngBase.Compra[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
@@ -524,7 +907,7 @@
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct ONGDonaciones.Donacion",
+				"internalType": "struct OngBase.Donacion",
 				"name": "",
 				"type": "tuple"
 			}
@@ -555,7 +938,7 @@
 						"type": "string"
 					},
 					{
-						"internalType": "enum ONGDonaciones.TipoDonante",
+						"internalType": "enum OngBase.TipoDonante",
 						"name": "tipoDonante",
 						"type": "uint8"
 					},
@@ -565,7 +948,7 @@
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct ONGDonaciones.Donante",
+				"internalType": "struct OngBase.Donante",
 				"name": "",
 				"type": "tuple"
 			}
@@ -611,7 +994,7 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "enum ONGDonaciones.EstadoProyecto",
+						"internalType": "enum OngBase.EstadoProyecto",
 						"name": "estado",
 						"type": "uint8"
 					},
@@ -626,7 +1009,7 @@
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct ONGDonaciones.Proyecto",
+				"internalType": "struct OngBase.Proyecto",
 				"name": "",
 				"type": "tuple"
 			}
@@ -693,6 +1076,158 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_donante",
+				"type": "address"
+			}
+		],
+		"name": "obtenerTrazabilidadDonante",
+		"outputs": [
+			{
+				"components": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "donante",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "proyectoId",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidad",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "fecha",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct OngBase.Donacion",
+						"name": "donacion",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "descripcion",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "responsable",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidadRecaudada",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidadValidada",
+								"type": "uint256"
+							},
+							{
+								"internalType": "enum OngBase.EstadoProyecto",
+								"name": "estado",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votosAprobacion",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votosCancelacion",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct OngBase.Proyecto",
+						"name": "proyecto",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "comprador",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "proveedor",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "proyectoId",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cantidad",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "valor",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "tipo",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "fecha",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "validada",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct OngBase.Compra[]",
+						"name": "compras",
+						"type": "tuple[]"
+					}
+				],
+				"internalType": "struct OngBase.TrazabilidadDonacion[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -700,6 +1235,40 @@
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "proveedores",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "descripcion",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "proveedor",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "ganancias",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -741,7 +1310,7 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "enum ONGDonaciones.EstadoProyecto",
+				"internalType": "enum OngBase.EstadoProyecto",
 				"name": "estado",
 				"type": "uint8"
 			},

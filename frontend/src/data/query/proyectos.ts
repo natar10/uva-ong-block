@@ -30,69 +30,110 @@ export interface ProyectosData {
 }
 
 /**
- * Función que obtiene todos los proyectos desde el contrato
+ * Funcion que obtiene todos los proyectos desde el contrato
  */
 export const fetchProyectos = async (
-  getContract: () => Promise<any>
+  getContract: () => Promise<ethers.Contract>
 ): Promise<ProyectosData> => {
   console.log('Cargando proyectos desde la blockchain...');
 
-  // Obtener contrato
-  const contract = await getContract();
+  try {
+    const contract = await getContract();
+    console.log('Contrato obtenido correctamente');
 
-  // Obtener total de proyectos
-  const total = await contract.obtenerTotalProyectos();
-  const totalNumber = Number(total);
+    // Obtener total de proyectos
+    const total = await contract.obtenerTotalProyectos();
+    console.log('Total proyectos raw:', total);
+    const totalNumber = Number(total);
 
-  // Obtener datos de cada proyecto
-  const proyectos: Proyecto[] = [];
-  let recaudadoTotal = 0n;
-  let validadoTotal = 0n;
+    if (totalNumber === 0) {
+      return {
+        proyectos: [],
+        stats: { totalProyectos: 0, totalRecaudado: '0', totalValidado: '0' },
+      };
+    }
 
-  for (let i = 0; i < totalNumber; i++) {
-    // Obtener el ID del proyecto
-    const proyectoId = await contract.listaProyectos(i);
+    // Obtener datos de cada proyecto
+    const proyectos: Proyecto[] = [];
+    let recaudadoTotal = 0n;
+    let validadoTotal = 0n;
 
-    // Obtener los datos completos del proyecto
-    const proyectoData = await contract.obtenerProyecto(proyectoId);
+    for (let i = 0; i < totalNumber; i++) {
+      try {
+        const proyectoId = await contract.listaProyectos(i);
 
-    // Convertir los datos del contrato al formato de la interfaz
-    proyectos.push({
-      id: proyectoData.id,
-      descripcion: proyectoData.descripcion,
-      responsable: proyectoData.responsable,
-      cantidadRecaudada: ethers.formatEther(proyectoData.cantidadRecaudada),
-      cantidadValidada: ethers.formatEther(proyectoData.cantidadValidada),
-      estado: Number(proyectoData.estado) as EstadoProyecto,
-      votosAprobacion: proyectoData.votosAprobacion.toString(),
-      votosCancelacion: proyectoData.votosCancelacion.toString(),
-    });
+        // Validar que el proyectoId no este vacio
+        if (!proyectoId || proyectoId === '') {
+          console.warn(`Proyecto en indice ${i} tiene ID vacio, saltando...`);
+          continue;
+        }
 
-    // Acumular totales
-    recaudadoTotal += proyectoData.cantidadRecaudada;
-    validadoTotal += proyectoData.cantidadValidada;
+        const proyectoData = await contract.obtenerProyecto(proyectoId);
+
+        // Validar que el proyecto tenga datos
+        if (!proyectoData || !proyectoData.id) {
+          console.warn(`Proyecto ${proyectoId} no tiene datos, saltando...`);
+          continue;
+        }
+
+        proyectos.push({
+          id: proyectoData.id,
+          descripcion: proyectoData.descripcion,
+          responsable: proyectoData.responsable,
+          cantidadRecaudada: ethers.formatEther(proyectoData.cantidadRecaudada),
+          cantidadValidada: ethers.formatEther(proyectoData.cantidadValidada),
+          estado: Number(proyectoData.estado) as EstadoProyecto,
+          votosAprobacion: proyectoData.votosAprobacion.toString(),
+          votosCancelacion: proyectoData.votosCancelacion.toString(),
+        });
+
+        recaudadoTotal += proyectoData.cantidadRecaudada;
+        validadoTotal += proyectoData.cantidadValidada;
+      } catch (err: any) {
+        console.warn(`Error al cargar proyecto en indice ${i}:`, err.message);
+        continue;
+      }
+    }
+
+    const stats: ProyectosStats = {
+      totalProyectos: totalNumber,
+      totalRecaudado: parseFloat(ethers.formatEther(recaudadoTotal)).toFixed(3),
+      totalValidado: parseFloat(ethers.formatEther(validadoTotal)).toFixed(3),
+    };
+
+    console.log(`${totalNumber} proyectos cargados exitosamente`);
+
+    return { proyectos, stats };
+  } catch (error: any) {
+    console.error('Error al cargar proyectos:', error);
+
+    // Si es error de BAD_DATA o ENS, el contrato no esta desplegado o red no soportada
+    if (
+      error.code === 'BAD_DATA' ||
+      error.code === 'UNSUPPORTED_OPERATION' ||
+      error.message?.includes('could not decode') ||
+      error.message?.includes('ENS')
+    ) {
+      console.warn('Contrato no disponible o no desplegado');
+      return {
+        proyectos: [],
+        stats: { totalProyectos: 0, totalRecaudado: '0', totalValidado: '0' },
+      };
+    }
+
+    throw error;
   }
-
-  const stats: ProyectosStats = {
-    totalProyectos: totalNumber,
-    totalRecaudado: parseFloat(ethers.formatEther(recaudadoTotal)).toFixed(3),
-    totalValidado: parseFloat(ethers.formatEther(validadoTotal)).toFixed(3),
-  };
-
-  console.log(`✓ ${totalNumber} proyectos cargados exitosamente`);
-
-  return { proyectos, stats };
 };
 
 /**
  * Query options para TanStack React Query
  */
-export const proyectosQueryOptions = (getContract: () => Promise<any>) =>
+export const proyectosQueryOptions = (getContract: () => Promise<ethers.Contract>) =>
   queryOptions({
     queryKey: ['proyectos'],
     queryFn: () => fetchProyectos(getContract),
-    staleTime: 1000 * 60 * 5, // 5 minutos
-    gcTime: 1000 * 60 * 10, // 10 minutos (antes era cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    retry: 1,
+    retryDelay: 1000,
   });
