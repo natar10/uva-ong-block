@@ -37,16 +37,3 @@ El contrato final \texttt{ONGDonaciones.sol} se centra en las funcionalidades es
 
     \item \textbf{Control de acceso básico:} Solo el owner puede crear proyectos, validar fondos y cambiar estados, implementado mediante el modificador \texttt{soloOwner}.
 \end{itemize}
-
-\subsection{Justificación de las simplificaciones}
-
-Estas decisiones responden a criterios de viabilidad técnica y pedagógica:
-
-\begin{enumerate}
-    \item \textbf{Reducción de complejidad:} Un contrato más simple es más fácil de auditar, probar y mantener.
-    \item \textbf{Enfoque en funcionalidades core:} Se priorizaron las capacidades esenciales de trazabilidad y gobernanza.
-    \item \textbf{Facilita la comprensión:} Un sistema menos complejo permite entender mejor los conceptos fundamentales de blockchain.
-    \item \textbf{Menor superficie de ataque:} Menos código significa menos vectores potenciales de vulnerabilidades.
-\end{enumerate}
-
-A pesar de estas simplificaciones, el sistema implementado cumple con los objetivos principales: proporcionar transparencia en las donaciones y permitir la participación democrática mediante votaciones.
