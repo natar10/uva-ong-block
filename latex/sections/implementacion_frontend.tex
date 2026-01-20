@@ -1,0 +1,122 @@
+\section{Implementación del front end}
+
+Se desarrolló una aplicación web utilizando React con TypeScript y Vite como herramienta de construcción.
+El frontend se conecta al contrato inteligente mediante la biblioteca ethers.js y la extensión MetaMask,
+permitiendo a los usuarios interactuar con la blockchain de forma intuitiva.
+
+La biblioteca \textbf{ethers.js} proporciona una interfaz de alto nivel para comunicarse con nodos de Ethereum,
+abstrayendo las complejidades del protocolo JSON-RPC subyacente. Por su parte, MetaMask actúa como
+proveedor Web3 (\textit{provider}), inyectando el objeto \texttt{window.ethereum} en el navegador y
+gestionando de forma segura las claves privadas del usuario, de modo que estas nunca son expuestas
+a la aplicación.
+
+Para que ethers.js pueda invocar las funciones del contrato desplegado en la red BLOCK LAB, es necesario
+disponer del ABI (\textit{Application Binary Interface}), un archivo JSON que describe la firma de las
+funciones, sus parámetros y tipos de retorno. Este ABI se genera automáticamente durante la compilación
+del contrato en Solidity.
+
+
+\subsection{Tecnologías utilizadas}
+
+\begin{itemize}
+    \item \textbf{React 19\cite{ReactDocs}:} Framework principal para la interfaz de usuario
+    \item \textbf{TypeScript:} Para tipado estático y mayor seguridad en el desarrollo
+    \item \textbf{Vite:} Herramienta de construcción moderna y rápida
+    \item \textbf{Material-UI (MUI):} Biblioteca de componentes para una interfaz profesional
+    \item \textbf{TanStack Router:} Gestión de rutas y navegación
+    \item \textbf{TanStack Query:} Manejo de estado y cache de datos blockchain
+    \item \textbf{ethers.js\cite{EthersJS}:} Librería para interactuar con Ethereum/Besu
+    \item \textbf{MetaMask:} Extensión de navegador para gestión de billeteras
+\end{itemize}
+
+\subsubsection{Hooks personalizados}
+
+Se crearon \href{https://github.com/natar10/uva-ong-block/tree/main/frontend/src/hooks}{hooks} de 
+React para encapsular la lógica de interacción con el contrato:
+
+\begin{itemize}
+    \item \texttt{useContract}: Hook base que inicializa la conexión con el contrato utilizando el ABI y la dirección configurada.
+    \item \texttt{useProyectos}: Obtiene la lista de proyectos activos.
+    \item \texttt{useDonaciones}: Consulta el historial de donaciones.
+    \item \texttt{useDonante}: Recupera información del donante conectado.
+    \item \texttt{useRealizarDonacion}: Gestiona el proceso de realizar una donación.
+    \item \texttt{useRegistrarDonante}: Maneja el registro de nuevos donantes.
+    \item \texttt{useVotarProyecto}: Permite votar por un proyecto específico.
+    \item \texttt{useProveedores}
+    \item \texttt{useRegistrarProveedor}
+    \item \texttt{useCompras}
+\end{itemize}
+
+\subsubsection{Capa de datos}
+
+Se implementó una arquitectura basada 
+en \href{https://github.com/natar10/uva-ong-block/tree/main/frontend/src/data}{queries y mutations} 
+siguiendo el patrón de TanStack Query:
+
+\begin{itemize}
+    \item \textbf{Queries} (\texttt{data/query}): Funciones de solo lectura que consultan el estado del contrato
+    \item \textbf{Mutations} (\texttt{data/mutations}): Operaciones que modifican el estado (donaciones, registros, votaciones)
+\end{itemize}
+
+\subsubsection{Configuración del contrato}
+
+El archivo \texttt{\href{URLhttps://github.com/natar10/uva-ong-block/blob/main/frontend/src/contracts/contractConfig.ts}{contractConfig.ts}} centraliza la configuración:
+
+\begin{itemize}
+    \item Dirección del contrato desplegado.
+    \item ABI del contrato (importado desde el JSON generado por Remix).
+    \item Parámetros de conexión a la red.
+\end{itemize}
+
+\subsection{Funcionalidades implementadas}
+
+La aplicación permite a los usuarios (Ver apéndice~\ref{app:walkthrough}):
+
+\begin{enumerate}
+    \item \textbf{Conectar billetera:} Mediante MetaMask, conectándose automáticamente a la red BLOCK LAB.
+    \item \textbf{Registrarse como donante:} Crear un perfil en el sistema.
+    \item \textbf{Visualizar proyectos:} Lista de proyectos activos con su información detallada.
+    \item \textbf{Consultar historial:} Ver todas las donaciones realizadas.
+    \item \textbf{Votar proyectos:} Utilizar tokens de gobernanza para votar.
+    \item \textbf{Ocupar fondos y validar su uso:} Los voluntarios pueden comprar materiales y validar el uso correcto de los fondos.
+\end{enumerate}
+
+\subsection{Manejo de transacciones}
+
+Un aspecto fundamental del diseño es el manejo correcto de las interacciones con la blockchain:
+
+\begin{itemize}
+    \item \textbf{Transacciones de solo lectura:} Las consultas (queries) se ejecutan sin necesidad de conexión de billetera, permitiendo ver información pública antes de conectarse.
+
+    \item \textbf{Transacciones de escritura:} Operaciones como donaciones y votaciones requieren que el usuario conecte su billetera y firme la transacción.
+
+    \item \textbf{Feedback al usuario:} Se implementaron estados de carga y mensajes de error para informar sobre el progreso de las transacciones.
+
+    \item \textbf{Actualización de estado:} Tras completar una transacción, se invalidan y refrescan automáticamente las queries afectadas.
+\end{itemize}
+
+\subsection{Despliegue}
+
+El frontend fue desplegado en Vercel \cite{vercel}\cite{vercel-platform}, lo que permite:
+
+\begin{itemize}
+    \item Acceso público a la aplicación.
+    \item Despliegue continuo desde el repositorio con CI/CD.
+    \item Integración con MetaMask
+\end{itemize}
+
+Para acceder a la aplicación, visite: \url{https://uva-ong-block.vercel.app/}
+
+\subsection{Lecciones aprendidas}
+
+Durante el desarrollo del frontend se identificaron varios aspectos críticos:
+
+\begin{enumerate}
+    \item \textbf{Blockchain como backend:} Al utilizar blockchain como capa de persistencia, todas las operaciones de lectura deben ejecutarse antes de requerir la conexión de billetera. Esto permite mostrar información al usuario y verificar que está en la red correcta antes de solicitar permisos.
+
+    \item \textbf{Actualización de direcciones:} Cada vez que se despliega un nuevo contrato, es necesario actualizar manualmente la dirección en \texttt{contractConfig.ts}. Este proceso es inevitable debido a la inmutabilidad de los contratos pero en un futuro se podría automatizar mediante scripts de despliegue al momento se lo realiza con variables de ambiente.
+
+    \item \textbf{Gestión de estado asíncrono:} Las interacciones con blockchain son inherentemente asíncronas y pueden fallar. TanStack Query facilita el manejo de estos estados (loading, error, success).
+
+    \item \textbf{Testing con cuentas de desarrollo:} Es fundamental tener múltiples cuentas de MetaMask configuradas para probar diferentes roles (owner, donantes, etc.). Por lo que por el momento una persona puede cumplir varios roles.
+\end{enumerate}

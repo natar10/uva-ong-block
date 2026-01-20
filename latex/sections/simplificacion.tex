@@ -1,0 +1,143 @@
+\section{Simplificación en base al diseño inicial}
+
+Durante la fase conceptual se diseñó un sistema ambicioso que incluía múltiples actores, mecanismos 
+complejos de distribución de fondos, gestión de proveedores y un sistema de votaciones con ciclos anuales. 
+Sin embargo, al enfrentar la implementación de la práctica cuyo objetivo es experimentar con sistemas 
+distribuidos Blockchain y contratos solidity se tomaron decisiones de simplificación para 
+garantizar un sistema funcional y comprensible.
+
+
+\subsection{Sistema implementado}
+
+El contrato final \texttt{ContratoONG.sol} se centra en las funcionalidades esenciales:
+
+\begin{itemize}
+    \item \textbf{Estructura de datos simplificada:} Se mantienen tres estructuras principales: \texttt{Donante}, \texttt{Proyecto} y \texttt{Donacion}, eliminando la complejidad de proveedores y administración.
+
+    \item \textbf{Flujo directo de donaciones:} Los fondos van directamente al proyecto especificado sin distribución porcentual automática.
+
+    \item \textbf{Tokens de gobernanza básicos:} Se asigna 1 token por cada ETH donado, sin distinción por tipo de donante.
+
+    \item \textbf{Votación simplificada:} Los donantes pueden votar en cualquier momento, gastando sus tokens para incrementar o disminuir el contador de votos del proyecto.
+
+    \item \textbf{Control de acceso básico:} Solo el owner puede crear proyectos, validar fondos y cambiar estados, implementado mediante el modificador \texttt{soloOwner}.
+\end{itemize}
+
+\subsubsection{Diagrama de estructuras de datos}
+
+La Figura \ref{fig:diagrama-er} muestra las relaciones entre las principales entidades del sistema.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.9\textwidth}{!}{%
+\begin{tikzpicture}[
+    entity/.style={rectangle split, rectangle split parts=2, draw, text centered, minimum width=3cm, font=\small},
+    relation/.style={-{Stealth}, thick},
+    label/.style={font=\scriptsize, fill=white, inner sep=1pt}
+]
+
+% Entidades
+\node[entity] (donante) {
+    \textbf{Donante}
+    \nodepart{second}
+    \begin{tabular}{l}
+    address direccion (PK)\\
+    string nombre\\
+    TipoDonante tipo\\
+    uint256 totalDonado
+    \end{tabular}
+};
+
+\node[entity, right=2.5cm of donante] (donacion) {
+    \textbf{Donacion}
+    \nodepart{second}
+    \begin{tabular}{l}
+    string id (PK)\\
+    address donante (FK)\\
+    string proyectoId (FK)\\
+    uint256 cantidad\\
+    uint256 fecha
+    \end{tabular}
+};
+
+\node[entity, right=2.5cm of donacion] (proyecto) {
+    \textbf{Proyecto}
+    \nodepart{second}
+    \begin{tabular}{l}
+    string id (PK)\\
+    string descripcion\\
+    address responsable\\
+    uint256 cantidadRecaudada\\
+    uint256 cantidadValidada\\
+    EstadoProyecto estado\\
+    uint256 votosAprobacion\\
+    uint256 votosCancelacion
+    \end{tabular}
+};
+
+\node[entity, below=2cm of donacion] (compra) {
+    \textbf{Compra}
+    \nodepart{second}
+    \begin{tabular}{l}
+    string id (PK)\\
+    address comprador\\
+    address proveedor (FK)\\
+    string proyectoId (FK)\\
+    uint256 cantidad\\
+    uint256 valor\\
+    string tipo\\
+    uint256 fecha\\
+    bool validada
+    \end{tabular}
+};
+
+\node[entity, left=2.5cm of compra] (material) {
+    \textbf{Material}
+    \nodepart{second}
+    \begin{tabular}{l}
+    string nombre\\
+    uint256 valor
+    \end{tabular}
+};
+
+\node[entity, right=2.5cm of compra] (proveedor) {
+    \textbf{Proveedor}
+    \nodepart{second}
+    \begin{tabular}{l}
+    address proveedor (PK)\\
+    string id\\
+    string descripcion\\
+    uint256 ganancias
+    \end{tabular}
+};
+
+% Relaciones
+\draw[relation] (donante) -- node[label, above] {1:N} (donacion);
+\draw[relation] (donacion) -- node[label, above] {N:1} (proyecto);
+\draw[relation] (proyecto) -- node[label, right] {1:N} (compra);
+\draw[relation] (compra) -- node[label, above] {N:1} (proveedor);
+\draw[relation, dashed] (compra) -- node[label, above] {usa} (material);
+
+\end{tikzpicture}
+}
+\caption{Diagrama entidad-relación de las estructuras de datos del contrato}
+\label{fig:diagrama-er}
+\end{figure}
+
+
+
+\subsection{Elementos eliminados del diseño original}
+
+El modelo conceptual inicial contemplaba diversos componentes que fueron simplificados en la implementación demostrativa:
+
+\begin{itemize}
+    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados con historial de compras. En la versión a actual, todos los proveedores venden todo tipo de material, y el precio es estático, fijado en el contrato. 
+
+    \item \textbf{Administración:} Se planeaba una cuenta administrativa que recibiría automáticamente el 20\% de cada donación para gastos logísticos. Esta funcionalidad no se implementó.
+
+    \item \textbf{Ciclos de votación y quema de tokens:} Se diseñó un sistema de votaciones anuales donde los tokens no utilizados se quemaban al final del ciclo. La implementación actual permite votaciones continuas sin restricciones temporales.
+
+    \item \textbf{Objetivo de los tokens de votación:} En la misma línea, los tokens de gobernanza distribuidas ahora tienen una utilidad diferente. En vez de utilizarse para asignar los porcentajes de la donación que se lleva cada proyecto, ahora se utilizan para votar a favor/en contra de proyectos, que necesitan tener un balance de votos positivos determinado para estar activos (cuando un proyecto deja de estar activo, la cantidad donada sin validar se devuelve).
+    
+    \item \textbf{Distinción entre tipos de donante para tokens:} Aunque el contrato mantiene el enum \texttt{TipoDonante}, no se implementó la regla diferencial de asignación de tokens (raíz cuadrada para empresas vs. proporcional para individuos).
+\end{itemize}

@@ -1,0 +1,83 @@
+\section{Conclusiones}
+
+Este proyecto demuestra la viabilidad de implementar un sistema de gobernanza 
+descentralizada para ONGs utilizando tecnología blockchain con este MVP. 
+A través del desarrollo del contrato \texttt{ContratoONG} y su integración con un 
+frontend moderno, se 
+han alcanzado los objetivos principales de transparencia y participación democrática.
+
+\subsection{Logros alcanzados}
+
+\subsubsection{Transparencia financiera}
+
+El sistema implementado proporciona trazabilidad de las donaciones. Cada transacción queda registrada de forma inmutable en la blockchain, permitiendo a cualquier persona verificar:
+
+\begin{itemize}
+    \item El origen de cada donación (dirección del donante).
+    \item El destino específico de los fondos (proyecto beneficiado).
+    \item El momento exacto de la transacción (timestamp).
+    \item El total recaudado y validado para cada proyecto.
+\end{itemize}
+
+Esta transparencia proporciona verificación continua y en tiempo real.
+
+\subsubsection{Gobernanza democrática}
+
+El mecanismo de tokens de gobernanza permite la participación directa de los donantes en las decisiones sobre priorización de proyectos. Aunque simplificado respecto al diseño original, el sistema implementado cumple con el objetivo de democratizar la toma de decisiones, otorgando poder de voto proporcional a las contribuciones realizadas.
+
+\subsubsection{Aprendizajes técnicos}
+
+La implementación proporcionó experiencia práctica en:
+
+\begin{itemize}
+    \item Desarrollo de contratos inteligentes en Solidity.
+    \item Despliegue en Hyperledger Besu utilizando Remix.
+    \item Integración frontend-blockchain mediante ethers.js.
+    \item Gestión de billeteras con MetaMask.
+    \item Configuración de permisos y redes personalizadas.
+    \item Manejo de transacciones síncronas y asíncronas.
+    \item Utilización de los tokens ERC20 para implementar un sistema de decisión basado en tokens de gobernanza.
+\end{itemize}
+
+\subsection{Desafíos identificados}
+
+\subsubsection{Inmutabilidad}
+
+La característica inmutable de los contratos blockchain garantiza que las reglas no pueden modificarse arbitrariamente (virtud para la transparencia), pero dificulta corregir errores o implementar mejoras (obstáculo para el desarrollo iterativo). Cada modificación requiere desplegar un nuevo contrato, migrar datos si es necesario y actualizar todas las integraciones.
+Esto sería algo importante a explorar a futuro con el uso de proxies o patrones de contratos actualizables.
+
+\subsubsection{Complejidad de configuración}
+
+La configuración correcta de MetaMask, especialmente los permisos de red por dominio, tiene su curva de aprendizaje. Esta barrera técnica podría dificultar la adopción por usuarios no técnicos, requiriendo interfaces más amigables o documentación exhaustiva.
+
+\subsubsection{Coordinación frontend-contrato}
+
+La necesidad de actualizar manualmente la dirección del contrato en el frontend tras cada despliegue introduce un punto de fricción en el flujo de desarrollo. 
+Aunque lo implementamos con variables de ambiente, en un entorno de producción sería ideal automatizar este proceso mediante scripts de despliegue.
+
+\subsubsection{Complejidad del sistema de gobernanza}
+
+El hecho de tener que controlar todos los posibles escenarios en los que los donantes pueden actuar de forma 
+maliciosa o egoísta añade una capa significativa de complejidad al diseño del sistema de gobernanza.
+Nos encontramos con varios de estos escenarios durante la implementación, y aunque se implementaron 
+algunas medidas básicas para mitigarlos, el sistema actual sigue siendo vulnerable a ciertos tipos de abuso.
+
+\subsection{Trabajo futuro}
+
+Para evolucionar este proyecto hacia un sistema de producción, se identifican las siguientes áreas de mejora:
+
+\begin{enumerate}
+    \item \textbf{Implementar distribución automática:} Recuperar la lógica de porcentajes del diseño original para automatizar la asignación de fondos según votaciones.
+
+    \item \textbf{Sistema de proveedores:} Añadir registro y validación de proveedores autorizados para completar el ciclo de trazabilidad hasta el gasto final.
+
+    \item \textbf{Optimización de gas:} Revisar estructuras de datos y lógica para reducir costos de transacción, especialmente importante si se migra a redes públicas.
+
+    \item \textbf{Mejorar la lógica de uso de los tokens de gobernanza:} Implementar una lógica más compleja y segura para el uso de los tokens. El sitema actual tiene varios puntos débiles que confían en que los usuarios ''sean buenos''. 
+    
+    Por ejemplo, un donante puede comprar tokens de gobernenza al resto de donantes, votando en contra de un proyecto al que ha donado, haciendo que se le devualva su dinero, incluso puede que más del otorgado inicialmente, o simplemente tener plena postestad para decidir que un proyecto se reanude, o se cancele.  
+
+    \item \textbf{Testing exhaustivo:} Desarrollar suite completa de tests unitarios y de integración utilizando Hardhat o Foundry.
+
+    \item \textbf{Auditoría de seguridad:} Antes de manejar fondos reales, realizar auditoría profesional del contrato.
+\end{enumerate}

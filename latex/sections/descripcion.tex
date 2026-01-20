@@ -1,0 +1,33 @@
+\section{Descripción general del sistema}
+
+Este proyecto implementa un sistema de gobernanza descentralizada para Organizaciones No Gubernamentales (ONG) en el ámbito educativo, utilizando la tecnología blockchain mediante Hyperledger Besu. El sistema aborda dos problemas fundamentales identificados en la fase conceptual: la falta de transparencia financiera y la gobernanza centralizada.
+
+\subsection{Objetivo}
+
+Como demostración académica del uso de Blockchain y Solidity, el sistema implementado busca garantizar 
+la trazabilidad completa de las donaciones y democratizar las decisiones sobre el 
+uso de fondos mediante un mecanismo de votación basado en tokens de gobernanza. Cada donante recibe tokens 
+proporcionales a su aportación, permitiéndoles votar por los proyectos que consideran prioritarios.
+
+\subsection{Actores principales}
+
+El sistema implementado contempla tres actores principales:
+
+\begin{itemize}
+    \item \textbf{Donantes:} Personas físicas o jurídicas que realizan contribuciones a la ONG y participan en la votación de proyectos mediante tokens de gobernanza.
+    \item \textbf{Voluntarios:} Miembros de la ONG encargados de la gestión de proyectos específicos.
+    \item \textbf{Administrador (Owner):} Cuenta que despliega el contrato y tiene permisos para crear proyectos.
+    \item \textbf{Proveedores:} Entidades que suministran los materiales necesarios para realizar los proyectos.
+\end{itemize}
+
+\subsection{Flujo operativo}
+
+El funcionamiento del sistema se estructura en torno a cuatro operaciones principales:
+
+\begin{enumerate}
+    \item \textbf{Registro de donantes:} Los usuarios se registran en el sistema especificando su tipo (individual o empresa).
+    \item \textbf{Realización de donaciones:} Los donantes envían fondos en ETH a proyectos específicos, recibiendo automáticamente tokens de gobernanza.
+    \item \textbf{Votación de proyectos:} Los donantes utilizan sus tokens para votar por los proyectos que desean apoyar, o desprestigiar a los que no considere decentes (únicamente si han donado a los mismos).
+    \item \textbf{Compra de materiales:} Los voluntarios responsables de los proyectos adquieren materiales a los proveedores, utilizando los fondos para ello (validando que el dinero de las donaciones se usa de manera legítima).
+    \item \textbf{Validación de fondos:} El voluntario responsable valida el uso correcto de los fondos recaudados a manera de oráculo y automáticamente los fondos donados se liberan para el proveedor.
+\end{enumerate}
