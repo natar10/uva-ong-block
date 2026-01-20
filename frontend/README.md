@@ -1,4 +1,53 @@
-Welcome to your new TanStack app! 
+# FrontEnd - Aplicación de ONG cliente del contrato blockchain
+
+Aplicación web desarrollada con **React 19**, **TypeScript** y **Vite**. Se conecta al contrato inteligente mediante **ethers.js** y **MetaMask**, permitiendo a los usuarios interactuar con la blockchain de forma intuitiva.
+
+MetaMask actúa como proveedor Web3, inyectando `window.ethereum` en el navegador y gestionando las claves privadas del usuario de forma segura. Para invocar las funciones del contrato, ethers.js utiliza el **ABI** (Application Binary Interface), un archivo JSON generado durante la compilación del contrato.
+
+### Archivos Clave
+
+- **`contractConfig.ts`**: Centraliza la dirección del contrato, el ABI importado desde Remix y los parámetros de conexión a la red.
+- **`hooks/`**: Encapsulan la lógica de interacción con el contrato.
+- **`data/query`**: Queries de solo lectura siguiendo el patrón TanStack Query.
+- **`data/mutations`**: Mutations que modifican el estado del contrato.
+
+## Estructura del Proyecto
+
+```
+src/
+├── config/
+│   └── contractConfig.ts    # Configuración del contrato (dirección, ABI, red)
+├── hooks/                   # Hooks personalizados para el contrato
+│   ├── useContract.ts       # Hook base de conexión
+│   ├── useProyectos.ts      # Lista de proyectos activos
+│   ├── useDonaciones.ts     # Historial de donaciones
+│   ├── useDonante.ts        # Info del donante conectado
+│   ├── useRealizarDonacion.ts
+│   ├── useRegistrarDonante.ts
+│   ├── useVotarProyecto.ts
+│   ├── useProveedores.ts
+│   ├── useRegistrarProveedor.ts
+│   └── useCompras.ts
+├── data/
+│   ├── query/               # Funciones de lectura (consultas al contrato)
+│   └── mutations/           # Operaciones de escritura (donaciones, registros, votos)
+└── routes/                  # Rutas de la aplicación (file-based routing)
+```
+
+## Tecnologías
+
+- **React 19**: Framework principal para la interfaz de usuario
+- **TypeScript**: Tipado estático
+- **Vite**: Herramienta de construcción
+- **Material-UI (MUI)**: Componentes de interfaz
+- **TanStack Router**: Gestión de rutas
+- **TanStack Query**: Manejo de estado y cache de datos blockchain
+- **ethers.js**: Interacción con Ethereum/Besu
+
+---
+
+A partir de este punto se muestra el boilerplate o indicaciones creada por TanStack herramienta usada
+para el scafolding de la aplicación y que permitió el rápido desarrollo de la misma:
 
 # Getting Started
 
