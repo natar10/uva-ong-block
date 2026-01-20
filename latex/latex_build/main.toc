@@ -42,3 +42,7 @@
 \contentsline {subsection}{\numberline {5.3}Simplificaciones y su impacto}{15}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}Trabajo futuro}{15}{subsection.5.4}%
 \contentsline {subsection}{\numberline {5.5}Reflexión final}{16}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Anexos}{18}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Repositorio y página web}{18}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}\textit {Walktrhough} de la aplicación}{18}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Walkthourgh \textit {Remix}}{20}{subsection.6.3}%

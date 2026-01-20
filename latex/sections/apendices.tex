@@ -1,0 +1,65 @@
+
+
+\subsection{Repositorio y página web}
+El código fuente de la aplicación esta disponible en el siguiente repositorio de GitHub: 
+
+\href{https:\/\/github.com\/natar10\/uva-ong-block}{https:\/\/github.com\/natar10\/uva-ong-block}
+
+Además, se puede visitar e interactuar con la aplicación a través del siguiente enlace:
+
+\href{https:\/\/uva-ong-block.vercel.app\/}{https:\/\/uva-ong-block.vercel.app\/}
+
+
+\subsection{\textit{Walktrhough} de la aplicación}
+
+Primero, el usuario \textit{Donante} se registra en al plataforma, propocionando un nombre. Esto hará saltar la extensión de Metamask, donde el usuario deberá selecccionar la cuenta con la que se regitra a la red blockchain.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/RegistroDonante.png}
+\end{figure}
+
+Una vez registrado, el usuario puede empezar a visualizar y donar a los diferentes proyectos de la ONG:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/historico.png}
+
+
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/donacion.png}
+\end{figure}
+
+
+Gracias a las donacion, el donante recibirá votos, que podrá usar para votar para que se apruebe nuevos proyectos, cuando se supere el margen establecido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/votacion.png}
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/registro_voto.png}
+
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots/votacion.png}
+\end{figure}
+
+
+\subsection{Walkthourgh \textit{Remix}}
+
+El deploy de la apliación se realizó a través e Remix IDE, complicalóndolo con el compilador \textit{London}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots_remix/DeployRemix.png}
+\end{figure}
+
+
+Para ello, hay que hacer el deploy del contrato en un orden concreto, ya que primero hay que inicializar el contrato del token ERC20 sobre el que se moverán los votos, para a continuación desplegar el contrato principal de la ONG pasándole la dirección del coontrato por el que se gestionarán los tokens de Gobernanza.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots_remix/ToeknGobernanza.png}
+
+
+    \includegraphics[width=0.7\textwidth]{./assets/screenshots_remix/ContratoONG.png}
+\end{figure}
+
