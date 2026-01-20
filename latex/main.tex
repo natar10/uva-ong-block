@@ -57,6 +57,7 @@
     linktoc=all
 }
 
+
 \title{
     \includegraphics[width=0.7\textwidth]{./assets/UVA-Logo.jpg}\\[1cm]
     Gobernanza Descentralizada para Organizaciones No Gubernamentales\\[0.2cm]
@@ -74,11 +75,16 @@
 
 \begin{document}
 
+\pagenumbering{gobble}
+
 \maketitle
 
 \newpage
 \tableofcontents
 \newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 %---------------------------------------------
 % PUNTO 2
@@ -98,6 +104,8 @@
 
 %-------Conclusiones-----
 \input{sections/conclusiones}
+
+\pagenumbering{gobble}
 
 \newpage
 \bibliographystyle{acm}

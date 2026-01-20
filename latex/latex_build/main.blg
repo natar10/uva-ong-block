@@ -1,6 +1,6 @@
 This is BibTeX, Version 0.99d
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
-The top-level auxiliary file: main.aux
+The top-level auxiliary file: latex_build/main.aux
 Reallocating 'name_of_file' (item size: 1) to 4 items.
 The style file: acm.bst
 Reallocating 'name_of_file' (item size: 1) to 11 items.
@@ -10,7 +10,7 @@ Warning--to sort, need author or key in MetaMask
 Warning--to sort, need author or key in ReactDocs
 You've used 8 entries,
             2253 wiz_defined-function locations,
-            569 strings with 4740 characters,
+            569 strings with 4764 characters,
 and the built_in function-call counts, 1651 in all, are:
 = -- 164
 > -- 38

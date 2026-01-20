@@ -3,11 +3,13 @@
 
 El contrato inteligente fue desarrollado en Solidity\cite{SolidityDocs} y desplegado en una red Hyperledger 
 Besu\cite{HyperledgerBesu} utilizando Remix IDE\cite{RemixIDE}. Esta sección describe la arquitectura del 
-contrato, sus funciones principales y las consideraciones técnicas encontradas durante el despliegue.
+contrato, sus funciones principales y las consideraciones técnicas encontradas 
+durante el despliegue (Apendice~\ref{app:despliegue_remix}).
 
 \subsection{Arquitectura del contrato}
 
-El contrato \texttt{ContratoONG.sol} implementa un diseño modular, donde cada parte del 
+El contrato \texttt{\href{https://github.com/natar10/uva-ong-block/blob/main/backend/contracts/ContratoONG.sol}{ContratoONG.sol}} 
+implementa un diseño modular, donde cada parte del 
 contrato ( donación, compra del material, votaciones, ...) viene definida en un ''subcontrato'' 
 diferente para una mejor organización.
 De esta manera, en el contrato \texttt{ContratoONG.sol} únicamente se compila el resto de contratos, 
@@ -15,7 +17,9 @@ vinculados a éste por herencias con el siguiente orden:\\[6pt]
 
 \textbf{OngBase → OngDonantes → OngProyectos → OngDonaciones → OngCompras → ContratoONG}\\
 
-\textbf{OngBase:} Define las estructuras de datos y mapeos básicos para donantes, proyectos, donaciones, compras y proveedores:
+\textbf{\href{https://github.com/natar10/uva-ong-block/blob/main/backend/contracts/base/OngBase.sol}{OngBase:}} 
+Define las estructuras de datos y mapeos básicos para donantes, proyectos, donaciones, compras y 
+proveedores:
 
 \begin{itemize}
     \item \textbf{Estructuras (Structs):}
@@ -57,110 +61,11 @@ vinculados a éste por herencias con el siguiente orden:\\[6pt]
 Esta combinación de mappings para acceso directo y arrays para iteración permite tanto búsquedas eficientes como la capacidad de listar
 todos los registros desde el frontend.
 
-\subsubsection{Diagrama de estructuras de datos}
-
-La Figura \ref{fig:diagrama-er} muestra las relaciones entre las principales entidades del sistema.
-
-\begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}[
-    entity/.style={rectangle split, rectangle split parts=2, draw, text centered, minimum width=3cm, font=\small},
-    relation/.style={-{Stealth}, thick},
-    label/.style={font=\scriptsize, fill=white, inner sep=1pt}
-]
-
-% Entidades
-\node[entity] (donante) {
-    \textbf{Donante}
-    \nodepart{second}
-    \begin{tabular}{l}
-    address direccion (PK)\\
-    string nombre\\
-    TipoDonante tipo\\
-    uint256 totalDonado
-    \end{tabular}
-};
-
-\node[entity, right=2.5cm of donante] (donacion) {
-    \textbf{Donacion}
-    \nodepart{second}
-    \begin{tabular}{l}
-    string id (PK)\\
-    address donante (FK)\\
-    string proyectoId (FK)\\
-    uint256 cantidad\\
-    uint256 fecha
-    \end{tabular}
-};
-
-\node[entity, right=2.5cm of donacion] (proyecto) {
-    \textbf{Proyecto}
-    \nodepart{second}
-    \begin{tabular}{l}
-    string id (PK)\\
-    string descripcion\\
-    address responsable\\
-    uint256 cantidadRecaudada\\
-    uint256 cantidadValidada\\
-    EstadoProyecto estado\\
-    uint256 votosAprobacion\\
-    uint256 votosCancelacion
-    \end{tabular}
-};
-
-\node[entity, below=2cm of donacion] (compra) {
-    \textbf{Compra}
-    \nodepart{second}
-    \begin{tabular}{l}
-    string id (PK)\\
-    address comprador\\
-    address proveedor (FK)\\
-    string proyectoId (FK)\\
-    uint256 cantidad\\
-    uint256 valor\\
-    string tipo\\
-    uint256 fecha\\
-    bool validada
-    \end{tabular}
-};
-
-\node[entity, left=2.5cm of compra] (material) {
-    \textbf{Material}
-    \nodepart{second}
-    \begin{tabular}{l}
-    string nombre\\
-    uint256 valor
-    \end{tabular}
-};
-
-\node[entity, right=2.5cm of compra] (proveedor) {
-    \textbf{Proveedor}
-    \nodepart{second}
-    \begin{tabular}{l}
-    address proveedor (PK)\\
-    string id\\
-    string descripcion\\
-    uint256 ganancias
-    \end{tabular}
-};
-
-% Relaciones
-\draw[relation] (donante) -- node[label, above] {1:N} (donacion);
-\draw[relation] (donacion) -- node[label, above] {N:1} (proyecto);
-\draw[relation] (proyecto) -- node[label, right] {1:N} (compra);
-\draw[relation] (compra) -- node[label, above] {N:1} (proveedor);
-\draw[relation, dashed] (compra) -- node[label, above] {usa} (material);
-
-\end{tikzpicture}
-}
-\caption{Diagrama entidad-relación de las estructuras de datos del contrato}
-\label{fig:diagrama-er}
-\end{figure}
-
 \subsection{Funciones principales}
 
-El contrato implementa las siguientes operaciones:
+El contrato dividilo en los módulos mecionados 
+(\href{https://github.com/natar10/uva-ong-block/tree/main/backend/contracts/modules}{ver organización}) implementa 
+las siguientes operaciones:
 
 \subsubsection{Funciones de escritura}
 
@@ -172,9 +77,13 @@ El contrato implementa las siguientes operaciones:
     proyectos. Valida que el ID no exista previamente y que el estado inicial no sea Cancelado.
 
     \item \texttt{donar(string proyectoId) payable}: Función principal que procesa donaciones. Recibe ETH, registra la donación,
-    actualiza totales y asigna tokens de gobernanza (1 token por cada 0.001 ETH). Si el donante no está registrado, lo crea automáticamente como individuo. Solo permite donar a proyectos en estado Activo.
+    actualiza totales y asigna tokens de gobernanza (1 token por cada 0.001 ETH). Si el donante no está registrado, 
+    lo crea automáticamente como individuo. Solo permite donar a proyectos en estado Activo.
 
-    \item \texttt{votarAprobacion(string proyectoId, uint256 cantidadVotos)}: Permite a los donantes registrados votar para aprobar un proyecto en estado Propuesto. Los tokens de gobernanza se queman al votar. Si se alcanza el umbral de votos mínimos (VOTOS\_MINIMOS = 2), el proyecto pasa a estado Activo.
+    \item \texttt{votarAprobacion(string proyectoId, uint256 cantidadVotos)}: Permite a los donantes registrados 
+    votar para aprobar un proyecto en estado Propuesto. Los tokens de gobernanza se queman al votar. Si se alcanza 
+    el umbral de votos mínimos (VOTOS\_MINIMOS = 2), el proyecto pasa a estado Activo. Este umbral es debido a 
+    propósitos demostrativos y debe ajustarse en implementaciones reales.
 
     \item \texttt{votarCancelacion(string proyectoId, uint256 cantidadVotos)}: Permite votar para cancelar un proyecto. Para proyectos Activos, solo pueden votar quienes hayan donado a ese proyecto. Los tokens se queman al votar. Si se alcanza el umbral, el proyecto se cancela.
 
@@ -182,7 +91,8 @@ El contrato implementa las siguientes operaciones:
 
     \item \texttt{registrarProveedor(address proveedor, string nombre, string descripcion)}: Función restringida al owner para registrar proveedores autorizados.
 
-    \item \texttt{realizarCompra(string compraId, string proyectoId, address proveedor, string tipoMaterial, uint128 cantidad)}: Permite al responsable del proyecto realizar compras. Verifica fondos suficientes y reserva el monto del balance del proyecto.
+    \item \texttt{realizarCompra(string compraId, string proyectoId, address proveedor,\\ 
+    string tipoMaterial, uint128 cantidad)}: Permite al responsable del proyecto realizar \\ compras. Verifica fondos suficientes y reserva el monto del balance del proyecto.
 
     \item \texttt{validarCompra(string compraId)}: El responsable del proyecto valida una compra después de verificar la recepción física del material. Al validar, se transfiere el ETH al proveedor (actúa como ``oráculo humano'').
 \end{itemize}
@@ -192,7 +102,7 @@ El contrato implementa las siguientes operaciones:
 El contrato incluye funciones de consulta que no modifican el estado:
 
 \begin{itemize}
-    \item \texttt{obtenerDonante(address)}, \texttt{obtenerProyecto(string)}, \texttt{obtenerDonacion(string)}, \texttt{obtenerCompra(string)}
+    \item \texttt{obtenerDonante(address)}, \texttt{obtenerProyecto(string)}, \texttt{obtenerDonacion(string)}, \\ \texttt{obtenerCompra(string)}
     \item \texttt{obtenerTotalDonantes()}, \texttt{obtenerTotalProyectos()}, \texttt{obtenerTotalDonaciones()}
     \item \texttt{obtenerTokensGobernanza(address)}: retorna el balance de tokens de gobernanza de un donante
     \item \texttt{obtenerComprasPorProyecto(string proyectoId)}: retorna todas las compras asociadas a un proyecto
@@ -213,17 +123,24 @@ modifier soloOwner() {
 }
 \end{lstlisting}
 
-El owner se establece en el constructor como la dirección que despliega el contrato.
+El owner se establece en el constructor como la dirección que despliega el contrato. 
+También cada función tiene sus validaciones y restricciones específicas según la acción que 
+realiza. 
+Por ejemplo, solo los donantes registrados pueden votar, y solo el responsable del 
+proyecto puede realizar compras.
 
 \subsection{Token de Gobernanza}
 
-El sistema incluye un contrato separado \texttt{TokenGobernanza.sol} que implementa un token ERC20 para la gobernanza de la ONG. Este token permite a los donantes participar en las votaciones de proyectos.
+El sistema incluye un contrato separado 
+\texttt{\href{https://github.com/natar10/uva-ong-block/blob/main/backend/contracts/TokenGobernanza.sol}{TokenGobernanza.sol}} 
+que implementa un token ERC20 para la gobernanza de la ONG. Este token permite a los 
+donantes participar en las votaciones de proyectos (Ver apendice~\ref{app:token_gobernanza}).
 
 \begin{itemize}
     \item \textbf{Estándar}: ERC20 con nombre ``Token Gobernanza ONG'' y símbolo ``TKN4GOOD''
     \item \textbf{Emisión}: Los tokens se mintean automáticamente al realizar donaciones (1 token por cada 0.001 ETH)
     \item \textbf{Consumo}: Los tokens se queman al votar, implementando un sistema de votación con peso económico
-    \item \textbf{Control de acceso}: Solo el contrato de donaciones (ContratoONG) o el owner pueden mintear y quemar tokens
+    \item \textbf{Control de acceso}: Solo el contrato de donaciones (ContratoONG) mintear y quemar tokens
 \end{itemize}
 
 El token utiliza las librerías de OpenZeppelin para garantizar la seguridad y el cumplimiento del estándar ERC20.
@@ -247,7 +164,8 @@ Para facilitar la integración con el frontend y permitir el seguimiento de oper
 
 \subsection{Proceso de despliegue}
 
-El contrato fue desplegado utilizando Remix IDE conectado a la red BLOCK LAB de Besu. El proceso incluyó:
+El contrato fue desplegado utilizando Remix IDE conectado a la red BLOCK LAB de Besu. 
+El proceso incluyó (Ver apéndice ~\ref{app:despliegue_remix}):
 
 \begin{enumerate}
     \item Compilación del contrato con Solidity 0.8.0.
