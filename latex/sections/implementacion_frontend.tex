@@ -1,6 +1,20 @@
 \section{Implementación del front end}
 
-Se desarrolló una aplicación web utilizando React con TypeScript y Vite como herramienta de construcción. El frontend se conecta al contrato inteligente mediante la biblioteca ethers.js y MetaMask, permitiendo a los usuarios interactuar con la blockchain de forma intuitiva.
+Se desarrolló una aplicación web utilizando React con TypeScript y Vite como herramienta de construcción.
+El frontend se conecta al contrato inteligente mediante la biblioteca ethers.js y la extensión MetaMask,
+permitiendo a los usuarios interactuar con la blockchain de forma intuitiva.
+
+La biblioteca \textbf{ethers.js} proporciona una interfaz de alto nivel para comunicarse con nodos de Ethereum,
+abstrayendo las complejidades del protocolo JSON-RPC subyacente. Por su parte, MetaMask actúa como
+proveedor Web3 (\textit{provider}), inyectando el objeto \texttt{window.ethereum} en el navegador y
+gestionando de forma segura las claves privadas del usuario, de modo que estas nunca son expuestas
+a la aplicación.
+
+Para que ethers.js pueda invocar las funciones del contrato desplegado en la red BLOCK LAB, es necesario
+disponer del ABI (\textit{Application Binary Interface}), un archivo JSON que describe la firma de las
+funciones, sus parámetros y tipos de retorno. Este ABI se genera automáticamente durante la compilación
+del contrato en Solidity.
+
 
 \subsection{Tecnologías utilizadas}
 
@@ -14,10 +28,6 @@ Se desarrolló una aplicación web utilizando React con TypeScript y Vite como h
     \item \textbf{ethers.js\cite{EthersJS}:} Librería para interactuar con Ethereum/Besu
     \item \textbf{MetaMask:} Extensión de navegador para gestión de billeteras
 \end{itemize}
-
-\subsection{Arquitectura del frontend}
-
-La aplicación se estructura en capas separando responsabilidades:
 
 \subsubsection{Hooks personalizados}
 
@@ -97,19 +107,6 @@ Un aspecto fundamental del diseño es el manejo correcto de las interacciones co
     \item \textbf{Actualización de estado:} Tras completar una transacción, se invalidan y refrescan automáticamente las queries afectadas.
 \end{itemize}
 
-\subsection{Diseño de interfaz}
-
-La aplicación utiliza Material-UI para proporcionar una experiencia de usuario moderna:
-
-\begin{itemize}
-    \item Dashboard con estadísticas de donaciones.
-    \item Cards visuales para cada proyecto con imágenes.
-    \item Formularios intuitivos para donaciones y registro.
-    \item Tablas con el historial completo de transacciones.
-    \item Uso de modales (pop-ups) para detalles y confirmaciones.
-    \item Modo claro/oscuro adaptativo.
-\end{itemize}
-
 \subsection{Despliegue}
 
 El frontend fue desplegado en Vercel \cite{vercel}\cite{vercel-platform}, lo que permite:
@@ -121,6 +118,8 @@ El frontend fue desplegado en Vercel \cite{vercel}\cite{vercel-platform}, lo que
     \item Integración con MetaMask en entorno de producción.
 \end{itemize}
 
+Para acceder a la aplicación, visite: \url{https://uva-ong-block.vercel.app/}
+
 \subsection{Lecciones aprendidas}
 
 Durante el desarrollo del frontend se identificaron varios aspectos críticos:
@@ -128,7 +127,7 @@ Durante el desarrollo del frontend se identificaron varios aspectos críticos:
 \begin{enumerate}
     \item \textbf{Blockchain como backend:} Al utilizar blockchain como capa de persistencia, todas las operaciones de lectura deben ejecutarse antes de requerir la conexión de billetera. Esto permite mostrar información al usuario y verificar que está en la red correcta antes de solicitar permisos.
 
-    \item \textbf{Actualización de direcciones:} Cada vez que se despliega un nuevo contrato, es necesario actualizar manualmente la dirección en \texttt{contractConfig.ts}. Este proceso es inevitable debido a la inmutabilidad de los contratos.
+    \item \textbf{Actualización de direcciones:} Cada vez que se despliega un nuevo contrato, es necesario actualizar manualmente la dirección en \texttt{contractConfig.ts}. Este proceso es inevitable debido a la inmutabilidad de los contratos pero en un futuro se podría automatizar mediante scripts de despliegue.
 
     \item \textbf{Gestión de estado asíncrono:} Las interacciones con blockchain son inherentemente asíncronas y pueden fallar. TanStack Query facilita el manejo de estos estados (loading, error, success).
 

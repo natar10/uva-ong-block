@@ -1,17 +1,21 @@
 \section{Simplificación en base al diseño inicial}
 
-Durante la fase conceptual se diseñó un sistema ambicioso que incluía múltiples actores, mecanismos complejos de distribución de fondos, gestión de proveedores y un sistema de votaciones con ciclos anuales. Sin embargo, al enfrentar la implementación práctica se tomaron decisiones de simplificación para garantizar un sistema funcional y comprensible.
+Durante la fase conceptual se diseñó un sistema ambicioso que incluía múltiples actores, mecanismos 
+complejos de distribución de fondos, gestión de proveedores y un sistema de votaciones con ciclos anuales. 
+Sin embargo, al enfrentar la implementación de la práctica cuyo objetivo es experimentar con sistemas 
+distribuidos Blockchain y contratos solidity se tomaron decisiones de simplificación para 
+garantizar un sistema funcional y comprensible.
 
 \subsection{Elementos eliminados del diseño original}
 
 El modelo conceptual contemplaba diversos componentes que fueron descartados en la implementación:
 
 \begin{itemize}
-    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados (constructoras, distribuidores de material educativo, editoriales) con historial de compras. Este mecanismo fue modificado para simplificar el flujo de fondos. En la versión a actual, todos los proveedores venden todo tipo de material, y el precio es estático, fijado en el contrato. 
+    \item \textbf{Gestión de proveedores:} El diseño inicial incluía un registro de proveedores autorizados con historial de compras. En la versión a actual, todos los proveedores venden todo tipo de material, y el precio es estático, fijado en el contrato. 
 
     \item \textbf{Administración ONG con billetera separada:} Se planeaba una cuenta administrativa que recibiría automáticamente el 20\% de cada donación para gastos logísticos. Esta funcionalidad no se implementó.
 
-    \item \textbf{Distribución porcentual automática:} El sistema original contemplaba que cada donación se distribuyera según porcentajes predefinidos (20\% a administración, 30\% equitativo entre proyectos sin meta, 50\% según votaciones). Este mecanismo complejo fue descartado.
+    \item \textbf{Distribución porcentual automática:} El sistema original contemplaba que cada donación se distribuyera según porcentajes predefinidos (20\% a administración, 30\% equitativo entre proyectos sin meta, 50\% según votaciones). Este mecanismo complejo fue simplificado.
 
     \item \textbf{Ciclos de votación y quema de tokens:} Se diseñó un sistema de votaciones anuales donde los tokens no utilizados se quemaban al final del ciclo. La implementación actual permite votaciones continuas sin restricciones temporales.
 
